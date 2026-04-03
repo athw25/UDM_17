@@ -16,6 +16,8 @@ namespace Caro.Shared.Network
         TimeOut,
         GameOver,
         Chat,
-        PlayerDisconnected
+        PlayerDisconnected,
+        GetHistory,
+        HistoryResponse
     }
 }
