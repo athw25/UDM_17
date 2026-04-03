@@ -1,0 +1,1 @@
+namespace Caro.Server.Storage { public class MatchHistoryRepository { } }
