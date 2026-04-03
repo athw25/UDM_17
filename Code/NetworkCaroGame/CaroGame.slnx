@@ -1,0 +1,7 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/Caro.Client/Caro.Client.csproj" />
+    <Project Path="src/Caro.Server/Caro.Server.csproj" />
+    <Project Path="src/Caro.Shared/Caro.Shared.csproj" />
+  </Folder>
+</Solution>

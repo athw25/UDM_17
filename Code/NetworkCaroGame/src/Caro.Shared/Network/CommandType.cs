@@ -4,8 +4,18 @@ namespace Caro.Shared.Network
     public enum CommandType
     {
         Login,
+        LoginSuccess,
+        LoginFailed,
+        GetPlayers,
+        UpdatePlayerList,
+        ChallengeRequest,
+        ChallengeResponse,
+        StartGame,
         Move,
-        MatchFound,
-        GameOver
+        TimerTick,
+        TimeOut,
+        GameOver,
+        Chat,
+        PlayerDisconnected
     }
 }
