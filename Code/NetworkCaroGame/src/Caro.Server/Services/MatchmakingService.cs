@@ -1,0 +1,1 @@
+namespace Caro.Server.Services { public class MatchmakingService { } }

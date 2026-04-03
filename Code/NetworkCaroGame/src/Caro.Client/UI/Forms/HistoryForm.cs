@@ -1,0 +1,1 @@
+using System.Windows.Forms; namespace Caro.Client.UI.Forms { public class HistoryForm : Form { } }
