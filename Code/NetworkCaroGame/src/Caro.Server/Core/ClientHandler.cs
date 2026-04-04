@@ -72,7 +72,7 @@ namespace Caro.Server.Core
             }
         }
 
-        public void Disconnect()
+        public void Disconnect() 
         {
             _client.Close();
             OnDisconnected?.Invoke(this);

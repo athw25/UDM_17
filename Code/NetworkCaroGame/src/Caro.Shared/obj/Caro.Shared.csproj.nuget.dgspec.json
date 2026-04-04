@@ -1,27 +1,25 @@
 {
   "format": 1,
   "restore": {
-    "d:\\UDM_17\\Code\\NetworkCaroGame\\src\\Caro.Shared\\Caro.Shared.csproj": {}
+    "/Users/htk/Desktop/Game Caro/UDM_17/Code/NetworkCaroGame/src/Caro.Shared/Caro.Shared.csproj": {}
   },
   "projects": {
-    "d:\\UDM_17\\Code\\NetworkCaroGame\\src\\Caro.Shared\\Caro.Shared.csproj": {
+    "/Users/htk/Desktop/Game Caro/UDM_17/Code/NetworkCaroGame/src/Caro.Shared/Caro.Shared.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "d:\\UDM_17\\Code\\NetworkCaroGame\\src\\Caro.Shared\\Caro.Shared.csproj",
+        "projectUniqueName": "/Users/htk/Desktop/Game Caro/UDM_17/Code/NetworkCaroGame/src/Caro.Shared/Caro.Shared.csproj",
         "projectName": "Caro.Shared",
-        "projectPath": "d:\\UDM_17\\Code\\NetworkCaroGame\\src\\Caro.Shared\\Caro.Shared.csproj",
-        "packagesPath": "C:\\Users\\Admin\\.nuget\\packages\\",
-        "outputPath": "d:\\UDM_17\\Code\\NetworkCaroGame\\src\\Caro.Shared\\obj\\",
+        "projectPath": "/Users/htk/Desktop/Game Caro/UDM_17/Code/NetworkCaroGame/src/Caro.Shared/Caro.Shared.csproj",
+        "packagesPath": "/Users/htk/.nuget/packages/",
+        "outputPath": "/Users/htk/Desktop/Game Caro/UDM_17/Code/NetworkCaroGame/src/Caro.Shared/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\Admin\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+          "/Users/htk/.nuget/NuGet/NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net8.0"
         ],
         "sources": {
-          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -64,10 +62,6 @@
             {
               "name": "Microsoft.NETCore.App.Ref",
               "version": "[8.0.25, 8.0.25]"
-            },
-            {
-              "name": "Microsoft.WindowsDesktop.App.Ref",
-              "version": "[8.0.25, 8.0.25]"
             }
           ],
           "frameworkReferences": {
@@ -75,7 +69,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.201/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/10.0.200/PortableRuntimeIdentifierGraph.json"
         }
       }
     }
