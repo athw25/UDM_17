@@ -1,1 +1,0 @@
-namespace Caro.Client.Services { public class GameClientService { } }

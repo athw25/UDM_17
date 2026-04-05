@@ -1,6 +1,6 @@
-
 using System;
 using System.Windows.Forms;
+using Caro.Client.UI.Forms;
 
 namespace Caro.Client
 {
@@ -10,7 +10,8 @@ namespace Caro.Client
         static void Main()
         {
             Application.EnableVisualStyles();
-            Application.Run(new UI.Forms.LoginForm());
+            Application.SetCompatibleTextRenderingDefault(false);
+            Application.Run(new LoginForm());
         }
     }
 }
