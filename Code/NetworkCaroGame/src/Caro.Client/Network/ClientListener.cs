@@ -1,1 +1,0 @@
-namespace Caro.Client.Network { public class ClientListener { } }

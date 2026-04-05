@@ -1,1 +1,0 @@
-namespace Caro.Client.UI.Components { public class StyledMessageBox { } }
