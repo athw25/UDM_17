@@ -20,5 +20,22 @@ namespace Caro.Server.Storage
                 Console.WriteLine($"Error saving history: {ex.Message}");
             }
         }
+
+        public System.Collections.Generic.List<string> GetHistory()
+        {
+            var history = new System.Collections.Generic.List<string>();
+            try
+            {
+                if (File.Exists(FilePath))
+                {
+                    history.AddRange(File.ReadAllLines(FilePath));
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error reading history: {ex.Message}");
+            }
+            return history;
+        }
     }
 }

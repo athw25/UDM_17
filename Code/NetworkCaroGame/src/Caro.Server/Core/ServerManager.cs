@@ -16,10 +16,12 @@ namespace Caro.Server.Core
         private TcpListener _listener;
         private readonly List<ClientHandler> _clients = new List<ClientHandler>();
         private readonly MatchmakingService _matchmakingService;
+        private readonly Caro.Server.Storage.MatchHistoryRepository _historyRepo;
 
         public ServerManager()
         {
             _matchmakingService = new MatchmakingService(this);
+            _historyRepo = new Caro.Server.Storage.MatchHistoryRepository();
         }
 
         public void Start(int port)
@@ -61,6 +63,11 @@ namespace Caro.Server.Core
 
                 case CommandType.GetPlayers:
                     SendPlayerList(client);
+                    break;
+                    
+                case CommandType.GetHistory:
+                    var history = _historyRepo.GetHistory();
+                    client.SendPacket(new Packet { Command = CommandType.HistoryResponse, Payload = Serializer.Serialize(history) });
                     break;
                     
                 default:
