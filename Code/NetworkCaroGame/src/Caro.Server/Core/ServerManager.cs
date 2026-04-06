@@ -15,6 +15,7 @@ namespace Caro.Server.Core
     {
         private TcpListener _listener;
         private readonly List<ClientHandler> _clients = new List<ClientHandler>();
+        private readonly object _clientsLock = new object();
         private readonly MatchmakingService _matchmakingService;
         private readonly Caro.Server.Storage.MatchHistoryRepository _historyRepo;
 
@@ -43,7 +44,11 @@ namespace Caro.Server.Core
                 handler.OnPacketReceived += Handler_OnPacketReceived;
                 handler.OnDisconnected += Handler_OnDisconnected;
                 
-                _clients.Add(handler);
+                lock (_clientsLock)
+                {
+                    _clients.Add(handler);
+                }
+                
                 handler.Start();
                 Console.WriteLine($"New client connected. Total: {_clients.Count}");
             }
@@ -78,15 +83,23 @@ namespace Caro.Server.Core
 
         private void Handler_OnDisconnected(ClientHandler client)
         {
-            _clients.Remove(client);
+            lock (_clientsLock)
+            {
+                _clients.Remove(client);
+            }
             _matchmakingService.HandleDisconnect(client);
             BroadcastPlayerList();
-            Console.WriteLine($"Client {client.PlayerInfo.Name ?? "Unknown"} disconnected. Total: {_clients.Count}");
+            Console.WriteLine($"Client {client.PlayerInfo.Name ?? "Unknown"} disconnected.");
         }
 
         public void BroadcastPlayerList()
         {
-            var players = _clients.Select(c => c.PlayerInfo).ToList();
+            List<PlayerInfo> players;
+            lock (_clientsLock)
+            {
+                players = _clients.Select(c => c.PlayerInfo).ToList();
+            }
+            
             var packet = new Packet
             {
                 Command = CommandType.UpdatePlayerList,
@@ -97,7 +110,12 @@ namespace Caro.Server.Core
 
         public void SendPlayerList(ClientHandler client)
         {
-            var players = _clients.Select(c => c.PlayerInfo).ToList();
+            List<PlayerInfo> players;
+            lock (_clientsLock)
+            {
+                players = _clients.Select(c => c.PlayerInfo).ToList();
+            }
+            
             client.SendPacket(new Packet
             {
                 Command = CommandType.UpdatePlayerList,
@@ -107,7 +125,13 @@ namespace Caro.Server.Core
 
         public void Broadcast(Packet packet)
         {
-            foreach (var client in _clients.ToList())
+            List<ClientHandler> currentClients;
+            lock (_clientsLock)
+            {
+                currentClients = _clients.ToList();
+            }
+
+            foreach (var client in currentClients)
             {
                 client.SendPacket(packet);
             }
@@ -115,7 +139,10 @@ namespace Caro.Server.Core
 
         public ClientHandler GetClientById(string id)
         {
-            return _clients.FirstOrDefault(c => c.PlayerInfo.Id == id);
+            lock (_clientsLock)
+            {
+                return _clients.FirstOrDefault(c => c.PlayerInfo.Id == id);
+            }
         }
     }
 }
