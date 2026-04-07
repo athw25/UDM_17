@@ -1,6 +1,7 @@
 using System.Collections.Generic;
+using System.Linq;
 using Caro.Server.Core;
-using Caro.Shared.Game;
+using Caro.Server.Game;
 using Caro.Shared.Network;
 
 namespace Caro.Server.Services
@@ -9,7 +10,6 @@ namespace Caro.Server.Services
     {
         private GameRoom _room;
         private BoardController _board;
-
         private int _currentPlayer = 1;
 
         public GameService(GameRoom room)
@@ -17,28 +17,37 @@ namespace Caro.Server.Services
             _room = room;
             _board = new BoardController(20);
         }
+    //chua co trong packet
+/*public void HandleMove(ClientHandler client, Packet packet)
+{
+    //check running
+    if (!_room.IsPlaying) return;
 
-        public void HandleMove(ClientHandler client, Packet packet)
-        {
-            int x = packet.Data["x"];
-            int y = packet.Data["y"];
-            int player = GetPlayerIndex(client);
+    int x = packet.Data["x"];
+    int y = packet.Data["y"];
+    int player = GetPlayerIndex(client);
 
-            if (player != _currentPlayer) return;
-            if (!_board.IsValidMove(x, y)) return;
+    if (player != _currentPlayer) return;
 
-            _board.MakeMove(x, y, player);
+    if (!_board.MakeMove(x, y, player)) return;
 
-            Broadcast("MOVE", x, y, player);
+    Broadcast("MOVE", x, y, player);
 
-            if (_board.CheckWin(x, y, player))
-            {
-                EndGame(player);
-                return;
-            }
+    // check win
+    if (_board.CheckWin(x, y, player))
+    {
+        EndGame(player);
+        return;
+    }
 
-            SwitchTurn();
-        }
+    // check draw
+    if (_board.IsDraw())
+    {
+        EndGame(0); // 0 = hòa
+        return;
+    }
 
+    SwitchTurn();
+}*/
     }
 }
