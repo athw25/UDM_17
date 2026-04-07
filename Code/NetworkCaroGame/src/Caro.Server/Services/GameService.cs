@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using Caro.Server.Core;
-using Caro.Server.Game;
+using Caro.Shared.Game;
 using Caro.Shared.Network;
 
 namespace Caro.Server.Services
