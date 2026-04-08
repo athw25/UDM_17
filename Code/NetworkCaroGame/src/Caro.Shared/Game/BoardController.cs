@@ -35,5 +35,10 @@ namespace Caro.Server.Game
             board[move.x, move.y] = 0;
             return move;
         }
+        public void Reset()
+        {
+            board = new int[Size, Size];
+            moveHistory.Clear();
+        }
     }
 }
