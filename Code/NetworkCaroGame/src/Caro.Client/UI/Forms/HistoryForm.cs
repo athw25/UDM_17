@@ -8,6 +8,7 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
 using System.Net.Sockets;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
@@ -39,7 +40,10 @@ namespace Caro.Client.UI.Forms
             buttonClose.Click += (s, e) => this.Close();
 
             foreach (DataGridViewColumn col in dataGridViewList.Columns)
+            {
                 col.Visible = true;
+                col.SortMode = DataGridViewColumnSortMode.NotSortable;
+            }
 
             this.Shown += async (s, e) => await LoadData();
             socket.OnReceive += HandleSocket;
@@ -65,10 +69,32 @@ namespace Caro.Client.UI.Forms
                 lastReload = DateTime.Now;
 
                 if (InvokeRequired)
-                    Invoke(new Action(async () => await LoadData()));
+                {
+                    Invoke(new Action(() =>
+                    {
+                        _ = ReloadSafe();
+                    }));
+                }
                 else
-                    _ = LoadData();
+                {
+                    _ = ReloadSafe();
+                }
             }
+        }
+
+        private CancellationTokenSource reloadCts;
+
+        private async Task ReloadSafe()
+        {
+            reloadCts?.Cancel();
+            reloadCts = new CancellationTokenSource();
+
+            try
+            {
+                await Task.Delay(200, reloadCts.Token); // debounce nhẹ
+                await LoadData();
+            }
+            catch (TaskCanceledException) { }
         }
 
         // ================= LOAD DATA =================
@@ -83,7 +109,11 @@ namespace Caro.Client.UI.Forms
             {
                 var data = await socket.GetHistory(username);
                 allData = data ?? new List<MatchHistory>();
-                ApplyFilter();
+
+                if (InvokeRequired)
+                    Invoke(new Action(() => ApplyFilter()));
+                else
+                    ApplyFilter();
             }
             finally
             {
@@ -146,18 +176,22 @@ namespace Caro.Client.UI.Forms
                     result
                 );
 
-                dataGridViewList.Rows[row].DefaultCellStyle.ForeColor =
-                    result == "Win" ? Color.Green : Color.Red;
-            }
+                if (result == "Win")
+                    dataGridViewList.Rows[row].DefaultCellStyle.ForeColor = Color.Green;
+                else if (result == "Lose")
+                    dataGridViewList.Rows[row].DefaultCellStyle.ForeColor = Color.Red;
+                else
+                    dataGridViewList.Rows[row].DefaultCellStyle.ForeColor = Color.Gray;
 
-            dataGridViewList.ClearSelection();
+                dataGridViewList.ClearSelection();
 
-            UpdateStats(data);
-            if (data.Count == 0)
-            {
-                labelMatches.Text = "No matches found";
-                labelWinRate.Text = "";
-                return;
+                UpdateStats(data);
+                if (data.Count == 0)
+                {
+                    labelMatches.Text = "No matches found";
+                    labelWinRate.Text = "";
+                    return;
+                }
             }
         }
 

@@ -91,7 +91,20 @@ namespace Caro.Client.UI.Forms
                             Data = fromUser
                         });
                     }
+                    else
+{
+    socket.Send(new Packet
+    {
+        Command = CommandType.Reject,
+        Data = fromUser
+    });
+}
                     break;
+                case CommandType.Reject:
+                    {
+                        MessageBox.Show($"{packet.Data} rejected your challenge!");
+                        break;
+                    }
 
                 case CommandType.StartGame:
                     string opponent = packet.Data;
@@ -141,7 +154,10 @@ namespace Caro.Client.UI.Forms
         // History
         private void BtnHistory_Click(object sender, EventArgs e)
         {
-            new HistoryForm().Show();
+            buttonHistory.Click += (s, e) =>
+            {
+                new HistoryForm(username, socket).Show();
+            };
         }
 
         // Logout

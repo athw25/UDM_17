@@ -1,8 +1,8 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 
 
-namespace Caro.Shared.Game
+namespace Caro.Server.Game
 {
     public class BoardController
     {
