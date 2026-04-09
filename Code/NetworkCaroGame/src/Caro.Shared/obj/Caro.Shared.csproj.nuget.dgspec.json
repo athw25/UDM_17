@@ -1,25 +1,31 @@
 {
   "format": 1,
   "restore": {
-    "/Users/htk/Desktop/Game Caro/UDM_17/Code/NetworkCaroGame/src/Caro.Shared/Caro.Shared.csproj": {}
+    "E:\\LTM\\UDM_17\\Code\\NetworkCaroGame\\src\\Caro.Shared\\Caro.Shared.csproj": {}
   },
   "projects": {
-    "/Users/htk/Desktop/Game Caro/UDM_17/Code/NetworkCaroGame/src/Caro.Shared/Caro.Shared.csproj": {
+    "E:\\LTM\\UDM_17\\Code\\NetworkCaroGame\\src\\Caro.Shared\\Caro.Shared.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/Users/htk/Desktop/Game Caro/UDM_17/Code/NetworkCaroGame/src/Caro.Shared/Caro.Shared.csproj",
+        "projectUniqueName": "E:\\LTM\\UDM_17\\Code\\NetworkCaroGame\\src\\Caro.Shared\\Caro.Shared.csproj",
         "projectName": "Caro.Shared",
-        "projectPath": "/Users/htk/Desktop/Game Caro/UDM_17/Code/NetworkCaroGame/src/Caro.Shared/Caro.Shared.csproj",
-        "packagesPath": "/Users/htk/.nuget/packages/",
-        "outputPath": "/Users/htk/Desktop/Game Caro/UDM_17/Code/NetworkCaroGame/src/Caro.Shared/obj/",
+        "projectPath": "E:\\LTM\\UDM_17\\Code\\NetworkCaroGame\\src\\Caro.Shared\\Caro.Shared.csproj",
+        "packagesPath": "C:\\Users\\LENOVO VIP PRO MAX\\.nuget\\packages\\",
+        "outputPath": "E:\\LTM\\UDM_17\\Code\\NetworkCaroGame\\src\\Caro.Shared\\obj\\",
         "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        ],
         "configFilePaths": [
-          "/Users/htk/.nuget/NuGet/NuGet.Config"
+          "C:\\Users\\LENOVO VIP PRO MAX\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
           "net8.0"
         ],
         "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -38,7 +44,7 @@
           "auditLevel": "low",
           "auditMode": "direct"
         },
-        "SdkAnalysisLevel": "10.0.200"
+        "SdkAnalysisLevel": "10.0.100"
       },
       "frameworks": {
         "net8.0": {
@@ -54,22 +60,12 @@
           ],
           "assetTargetFallback": true,
           "warn": true,
-          "downloadDependencies": [
-            {
-              "name": "Microsoft.AspNetCore.App.Ref",
-              "version": "[8.0.25, 8.0.25]"
-            },
-            {
-              "name": "Microsoft.NETCore.App.Ref",
-              "version": "[8.0.25, 8.0.25]"
-            }
-          ],
           "frameworkReferences": {
             "Microsoft.NETCore.App": {
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/10.0.200/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.104/PortableRuntimeIdentifierGraph.json"
         }
       }
     }

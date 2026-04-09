@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 
+
 namespace Caro.Shared.Game
 {
     public class BoardController
