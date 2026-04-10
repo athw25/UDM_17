@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Caro.Shared")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+4377ed10668e6467cc6602a6010704573bdf2234")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+958c41169631cf2e3263a948d9f083c0d77b9222")]
 [assembly: System.Reflection.AssemblyProductAttribute("Caro.Shared")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Caro.Shared")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

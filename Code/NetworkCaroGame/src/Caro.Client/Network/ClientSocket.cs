@@ -1,95 +1,155 @@
+﻿using Caro.Client.UI.Forms;
+using Caro.Shared.Network;
 using System;
+using System.IO;
 using System.Net.Sockets;
 using System.Text;
+using System.Text.Json;
 using System.Threading;
-using Caro.Shared.Network;
-using Caro.Shared.Utils;
+using System.Threading.Tasks;
 
 namespace Caro.Client.Network
 {
     public class ClientSocket
     {
-        private static ClientSocket _instance;
-        public static ClientSocket Instance => _instance ??= new ClientSocket();
+        private TcpClient client;
+        private NetworkStream stream;
 
-        private TcpClient _client;
-        private NetworkStream _stream;
-        private Thread _receiveThread;
+        private readonly SemaphoreSlim sendLock = new SemaphoreSlim(1, 1);
+        private CancellationTokenSource cts;
 
-        public event Action<Packet> OnPacketReceived;
+        // 🔥 EVENT NHẬN DATA
+        public event Action<Packet>? OnReceive;
 
-        private ClientSocket() { }
+        public bool IsConnected => client?.Connected ?? false;
 
         // ================= CONNECT =================
-        public bool Connect(string ip, int port)
+        public async Task ConnectAsync(string ip, int port)
+        {
+            client = new TcpClient();
+            await client.ConnectAsync(ip, port);
+
+            stream = client.GetStream();
+            cts = new CancellationTokenSource();
+
+            _ = Task.Run(() => ReceiveLoop(cts.Token));
+        }
+
+        // ================= RECEIVE LOOP =================
+        private async Task ReceiveLoop(CancellationToken token)
         {
             try
             {
-                _client = new TcpClient();
-                _client.Connect(ip, port);
-                _stream = _client.GetStream();
+                var reader = new StreamReader(stream, Encoding.UTF8);
 
-                StartReceive();
+                while (!token.IsCancellationRequested)
+                {
+                    string line = await reader.ReadLineAsync();
 
-                return true;
+                    if (string.IsNullOrEmpty(line))
+                        continue;
+
+                    Packet packet = JsonSerializer.Deserialize<Packet>(line);
+
+                    OnReceive?.Invoke(packet);
+                }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                Console.WriteLine("Connect error: " + ex.Message);
-                return false;
+                Disconnect();
             }
         }
 
         // ================= SEND =================
+        public async Task SendAsync(Packet packet)
+        {
+            if (!IsConnected) return;
+
+            string json = JsonSerializer.Serialize(packet) + "\n";
+
+            byte[] data = Encoding.UTF8.GetBytes(json);
+
+            await sendLock.WaitAsync();
+            try
+            {
+                await stream.WriteAsync(data, 0, data.Length);
+            }
+            finally
+            {
+                sendLock.Release();
+            }
+        }
+
+        // ================= SYNC SEND (CHO UI DỄ DÙNG) =================
         public void Send(Packet packet)
         {
-            try
-            {
-                if (_stream == null) return;
-
-                string json = Serializer.Serialize(packet);
-                byte[] data = Encoding.UTF8.GetBytes(json);
-
-                _stream.Write(data, 0, data.Length);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("Send error: " + ex.Message);
-            }
+            _ = SendAsync(packet);
         }
 
-        // ================= RECEIVE =================
-        private void StartReceive()
+        // ================= GET HISTORY =================
+        public async Task<System.Collections.Generic.List<MatchHistory>> GetHistory(string username)
         {
-            _receiveThread = new Thread(ReceiveLoop);
-            _receiveThread.IsBackground = true;
-            _receiveThread.Start();
-        }
+            var tcs = new TaskCompletionSource<System.Collections.Generic.List<MatchHistory>>();
 
-        private void ReceiveLoop()
-        {
-            byte[] buffer = new byte[4096];
-
-            try
+            void handler(Packet p)
             {
-                while (true)
+                if (p.Command == CommandType.HistoryData)
                 {
-                    int bytesRead = _stream.Read(buffer, 0, buffer.Length);
-
-                    if (bytesRead == 0)
-                        continue;
-
-                    string json = Encoding.UTF8.GetString(buffer, 0, bytesRead);
-
-                    var packet = Serializer.Deserialize<Packet>(json);
-
-                    OnPacketReceived?.Invoke(packet);
+                    try
+                    {
+                        var data = JsonSerializer.Deserialize<System.Collections.Generic.List<MatchHistory>>(p.Data);
+                        tcs.TrySetResult(data);
+                    }
+                    catch
+                    {
+                        tcs.TrySetResult(new System.Collections.Generic.List<MatchHistory>());
+                    }
                 }
             }
-            catch (Exception ex)
+
+            OnReceive += handler;
+
+            await SendAsync(new Packet
             {
-                Console.WriteLine("Receive error: " + ex.Message);
-            }
+                Command = CommandType.GetHistory,
+                Data = username
+            });
+
+            var result = await tcs.Task;
+
+            OnReceive -= handler;
+
+            return result;
+        }
+
+        // ================= LOGIN =================
+        public void Login(string username)
+        {
+            Send(new Packet
+            {
+                Command = CommandType.Login,
+                Data = username
+            });
+        }
+
+        // ================= CHALLENGE =================
+        public void Challenge(string target)
+        {
+            Send(new Packet
+            {
+                Command = CommandType.Challenge,
+                Data = target
+            });
+        }
+
+        // ================= MOVE =================
+        public void SendMove(object moveData)
+        {
+            Send(new Packet
+            {
+                Command = CommandType.Move,
+                Data = JsonSerializer.Serialize(moveData)
+            });
         }
 
         // ================= DISCONNECT =================
@@ -97,8 +157,9 @@ namespace Caro.Client.Network
         {
             try
             {
-                _stream?.Close();
-                _client?.Close();
+                cts?.Cancel();
+                stream?.Close();
+                client?.Close();
             }
             catch { }
         }

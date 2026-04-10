@@ -33,6 +33,7 @@ namespace Caro.Client.UI.Forms
 
         private void InitializeComponent()
         {
+            ComponentResourceManager resources = new ComponentResourceManager(typeof(LoginForm));
             panel1 = new Panel();
             pictureBox1 = new PictureBox();
             textBoxServer = new TextBox();
@@ -51,8 +52,9 @@ namespace Caro.Client.UI.Forms
             // 
             // panel1
             // 
+            panel1.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             panel1.Controls.Add(pictureBox1);
-            panel1.Location = new System.Drawing.Point(247, 4);
+            panel1.Location = new System.Drawing.Point(259, 4);
             panel1.Name = "panel1";
             panel1.Size = new System.Drawing.Size(409, 419);
             panel1.TabIndex = 0;
@@ -60,6 +62,7 @@ namespace Caro.Client.UI.Forms
             // 
             // pictureBox1
             // 
+            pictureBox1.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             pictureBox1.Image = Properties.Resources._9a91e11d31b376abcc3b8f28cec9414b;
             pictureBox1.Location = new System.Drawing.Point(3, 3);
             pictureBox1.Name = "pictureBox1";
@@ -99,7 +102,7 @@ namespace Caro.Client.UI.Forms
             label2.AutoSize = true;
             label2.Font = new System.Drawing.Font("Forte", 22.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, 0);
             label2.ForeColor = System.Drawing.Color.Firebrick;
-            label2.Location = new System.Drawing.Point(61, 127);
+            label2.Location = new System.Drawing.Point(67, 116);
             label2.Name = "label2";
             label2.Size = new System.Drawing.Size(100, 41);
             label2.TabIndex = 1;
@@ -109,7 +112,7 @@ namespace Caro.Client.UI.Forms
             // 
             label1.AutoSize = true;
             label1.Font = new System.Drawing.Font("Showcard Gothic", 22.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, 0);
-            label1.Location = new System.Drawing.Point(9, 3);
+            label1.Location = new System.Drawing.Point(15, 61);
             label1.Name = "label1";
             label1.Size = new System.Drawing.Size(223, 46);
             label1.TabIndex = 0;
@@ -146,10 +149,11 @@ namespace Caro.Client.UI.Forms
             // 
             // LoginForm
             // 
-            ClientSize = new System.Drawing.Size(659, 427);
+            ClientSize = new System.Drawing.Size(671, 427);
             Controls.Add(panel3);
             Controls.Add(panel2);
             Controls.Add(panel1);
+            Icon = (System.Drawing.Icon)resources.GetObject("$this.Icon");
             Name = "LoginForm";
             Text = "Game Caro - Login";
             panel1.ResumeLayout(false);
@@ -200,8 +204,8 @@ namespace Caro.Client.UI.Forms
 
                 socket = new ClientSocket();
 
-                await socket.Connect(ip, port, username);
-
+                await socket.ConnectAsync(ip, port);
+                socket.Login(username);
                 UIHelper.SwitchForm(this, new LobbyForm(username, socket));
             }
             catch (Exception ex)

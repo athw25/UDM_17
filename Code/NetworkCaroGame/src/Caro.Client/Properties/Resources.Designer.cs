@@ -73,9 +73,9 @@ namespace Caro.Client.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap Screenshot_2026_04_08_010003 {
+        internal static System.Drawing.Bitmap _9a91e11d31b376abcc3b8f28cec9414b1 {
             get {
-                object obj = ResourceManager.GetObject("Screenshot 2026-04-08 010003", resourceCulture);
+                object obj = ResourceManager.GetObject("9a91e11d31b376abcc3b8f28cec9414b1", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -83,9 +83,19 @@ namespace Caro.Client.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap Screenshot_2026_04_08_010013 {
+        internal static System.Drawing.Bitmap O {
             get {
-                object obj = ResourceManager.GetObject("Screenshot 2026-04-08 010013", resourceCulture);
+                object obj = ResourceManager.GetObject("O", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap X {
+            get {
+                object obj = ResourceManager.GetObject("X", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

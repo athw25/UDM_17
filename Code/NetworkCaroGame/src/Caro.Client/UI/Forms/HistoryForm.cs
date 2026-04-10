@@ -231,25 +231,26 @@ namespace Caro.Client.UI.Forms
 
         private void InitializeComponent()
         {
-            DataGridViewCellStyle dataGridViewCellStyle3 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle4 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
+            ComponentResourceManager resources = new ComponentResourceManager(typeof(HistoryForm));
             panel2 = new Panel();
             label2 = new Label();
             label1 = new Label();
             comboBoxResult = new ComboBox();
             panel1 = new Panel();
-            textBoxSearch = new TextBox();
-            label3 = new Label();
-            label4 = new Label();
             buttonRefresh = new Button();
+            label4 = new Label();
+            label3 = new Label();
+            textBoxSearch = new TextBox();
             dataGridViewList = new DataGridView();
             Time = new DataGridViewTextBoxColumn();
             Opponent = new DataGridViewTextBoxColumn();
             Result = new DataGridViewTextBoxColumn();
             panel3 = new Panel();
-            labelMatches = new Label();
-            labelWinRate = new Label();
             buttonClose = new Button();
+            labelWinRate = new Label();
+            labelMatches = new Label();
             panel2.SuspendLayout();
             panel1.SuspendLayout();
             ((ISupportInitialize)dataGridViewList).BeginInit();
@@ -260,19 +261,19 @@ namespace Caro.Client.UI.Forms
             // 
             panel2.Controls.Add(label2);
             panel2.Controls.Add(label1);
-            panel2.Location = new System.Drawing.Point(43, 12);
+            panel2.Location = new Point(43, 12);
             panel2.Name = "panel2";
-            panel2.Size = new System.Drawing.Size(850, 109);
+            panel2.Size = new Size(850, 109);
             panel2.TabIndex = 3;
             // 
             // label2
             // 
             label2.AutoSize = true;
-            label2.Font = new System.Drawing.Font("Forte", 22.2F);
-            label2.ForeColor = System.Drawing.Color.Firebrick;
-            label2.Location = new System.Drawing.Point(319, 55);
+            label2.Font = new Font("Forte", 22.2F);
+            label2.ForeColor = Color.Firebrick;
+            label2.Location = new Point(319, 55);
             label2.Name = "label2";
-            label2.Size = new System.Drawing.Size(252, 41);
+            label2.Size = new Size(252, 41);
             label2.TabIndex = 0;
             label2.Text = "Match History";
             label2.Click += label2_Click;
@@ -280,19 +281,19 @@ namespace Caro.Client.UI.Forms
             // label1
             // 
             label1.AutoSize = true;
-            label1.Font = new System.Drawing.Font("Showcard Gothic", 22.2F);
-            label1.Location = new System.Drawing.Point(330, 9);
+            label1.Font = new Font("Showcard Gothic", 22.2F);
+            label1.Location = new Point(330, 9);
             label1.Name = "label1";
-            label1.Size = new System.Drawing.Size(223, 46);
+            label1.Size = new Size(223, 46);
             label1.TabIndex = 1;
             label1.Text = "Game Caro";
             // 
             // comboBoxResult
             // 
             comboBoxResult.FormattingEnabled = true;
-            comboBoxResult.Location = new System.Drawing.Point(3, 88);
+            comboBoxResult.Location = new Point(3, 88);
             comboBoxResult.Name = "comboBoxResult";
-            comboBoxResult.Size = new System.Drawing.Size(235, 28);
+            comboBoxResult.Size = new Size(235, 28);
             comboBoxResult.TabIndex = 4;
             // 
             // panel1
@@ -302,45 +303,45 @@ namespace Caro.Client.UI.Forms
             panel1.Controls.Add(label3);
             panel1.Controls.Add(textBoxSearch);
             panel1.Controls.Add(comboBoxResult);
-            panel1.Location = new System.Drawing.Point(43, 151);
+            panel1.Location = new Point(43, 151);
             panel1.Name = "panel1";
-            panel1.Size = new System.Drawing.Size(250, 171);
+            panel1.Size = new Size(250, 171);
             panel1.TabIndex = 5;
             // 
-            // textBoxSearch
+            // buttonRefresh
             // 
-            textBoxSearch.Location = new System.Drawing.Point(3, 33);
-            textBoxSearch.Name = "textBoxSearch";
-            textBoxSearch.Size = new System.Drawing.Size(235, 27);
-            textBoxSearch.TabIndex = 5;
-            // 
-            // label3
-            // 
-            label3.AutoSize = true;
-            label3.Location = new System.Drawing.Point(3, 10);
-            label3.Name = "label3";
-            label3.Size = new System.Drawing.Size(126, 20);
-            label3.TabIndex = 6;
-            label3.Text = "Search Username:";
-            label3.Click += label3_Click;
+            buttonRefresh.Location = new Point(3, 139);
+            buttonRefresh.Name = "buttonRefresh";
+            buttonRefresh.Size = new Size(94, 29);
+            buttonRefresh.TabIndex = 8;
+            buttonRefresh.Text = "Refresh";
+            buttonRefresh.UseVisualStyleBackColor = true;
             // 
             // label4
             // 
             label4.AutoSize = true;
-            label4.Location = new System.Drawing.Point(3, 65);
+            label4.Location = new Point(3, 65);
             label4.Name = "label4";
-            label4.Size = new System.Drawing.Size(85, 20);
+            label4.Size = new Size(85, 20);
             label4.TabIndex = 7;
             label4.Text = "Filter result:";
             // 
-            // buttonRefresh
+            // label3
             // 
-            buttonRefresh.Location = new System.Drawing.Point(3, 139);
-            buttonRefresh.Name = "buttonRefresh";
-            buttonRefresh.Size = new System.Drawing.Size(94, 29);
-            buttonRefresh.TabIndex = 8;
-            buttonRefresh.Text = "Refresh";
-            buttonRefresh.UseVisualStyleBackColor = true;
+            label3.AutoSize = true;
+            label3.Location = new Point(3, 10);
+            label3.Name = "label3";
+            label3.Size = new Size(126, 20);
+            label3.TabIndex = 6;
+            label3.Text = "Search Username:";
+            label3.Click += label3_Click;
+            // 
+            // textBoxSearch
+            // 
+            textBoxSearch.Location = new Point(3, 33);
+            textBoxSearch.Name = "textBoxSearch";
+            textBoxSearch.Size = new Size(235, 27);
+            textBoxSearch.TabIndex = 5;
             // 
             // dataGridViewList
             // 
@@ -349,34 +350,33 @@ namespace Caro.Client.UI.Forms
             dataGridViewList.AllowUserToOrderColumns = true;
             dataGridViewList.AllowUserToResizeColumns = false;
             dataGridViewList.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-            dataGridViewList.BackgroundColor = System.Drawing.Color.White;
+            dataGridViewList.BackgroundColor = Color.White;
             dataGridViewList.BorderStyle = BorderStyle.None;
-            dataGridViewList.ColumnHeadersDefaultCellStyle.Font = new Font("Segoe UI", 10, FontStyle.Bold);
-            dataGridViewList.EnableHeadersVisualStyles = false;
-            dataGridViewCellStyle3.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle3.Font = new System.Drawing.Font("Segoe UI", 10F);
-            dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle3.WrapMode = DataGridViewTriState.True;
-            dataGridViewList.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle3;
+            dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = SystemColors.Control;
+            dataGridViewCellStyle1.Font = new Font("Segoe UI", 10F);
+            dataGridViewCellStyle1.ForeColor = SystemColors.WindowText;
+            dataGridViewCellStyle1.SelectionBackColor = SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = DataGridViewTriState.True;
+            dataGridViewList.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
             dataGridViewList.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dataGridViewList.Columns.AddRange(new DataGridViewColumn[] { Time, Opponent, Result });
-            dataGridViewCellStyle4.Alignment = DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle4.Font = new System.Drawing.Font("Segoe UI", 10F);
-            dataGridViewCellStyle4.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle4.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle4.WrapMode = DataGridViewTriState.False;
-            dataGridViewList.DefaultCellStyle = dataGridViewCellStyle4;
-            dataGridViewList.Location = new System.Drawing.Point(362, 134);
+            dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.BackColor = SystemColors.Window;
+            dataGridViewCellStyle2.Font = new Font("Segoe UI", 10F);
+            dataGridViewCellStyle2.ForeColor = SystemColors.ControlText;
+            dataGridViewCellStyle2.SelectionBackColor = SystemColors.Highlight;
+            dataGridViewCellStyle2.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle2.WrapMode = DataGridViewTriState.False;
+            dataGridViewList.DefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewList.EnableHeadersVisualStyles = false;
+            dataGridViewList.Location = new Point(362, 134);
             dataGridViewList.Name = "dataGridViewList";
             dataGridViewList.ReadOnly = true;
             dataGridViewList.RowHeadersVisible = false;
             dataGridViewList.RowHeadersWidth = 51;
-            dataGridViewList.Size = new System.Drawing.Size(531, 315);
+            dataGridViewList.Size = new Size(531, 315);
             dataGridViewList.TabIndex = 6;
             // 
             // Time
@@ -408,46 +408,47 @@ namespace Caro.Client.UI.Forms
             panel3.Controls.Add(buttonClose);
             panel3.Controls.Add(labelWinRate);
             panel3.Controls.Add(labelMatches);
-            panel3.Location = new System.Drawing.Point(43, 328);
+            panel3.Location = new Point(43, 328);
             panel3.Name = "panel3";
-            panel3.Size = new System.Drawing.Size(250, 125);
+            panel3.Size = new Size(250, 125);
             panel3.TabIndex = 7;
-            // 
-            // labelMatches
-            // 
-            labelMatches.AutoSize = true;
-            labelMatches.Location = new System.Drawing.Point(11, 6);
-            labelMatches.Name = "labelMatches";
-            labelMatches.Size = new System.Drawing.Size(104, 20);
-            labelMatches.TabIndex = 0;
-            labelMatches.Text = "Total matches:";
-            labelMatches.Click += label5_Click;
-            // 
-            // labelWinRate
-            // 
-            labelWinRate.AutoSize = true;
-            labelWinRate.Location = new System.Drawing.Point(11, 38);
-            labelWinRate.Name = "labelWinRate";
-            labelWinRate.Size = new System.Drawing.Size(72, 20);
-            labelWinRate.TabIndex = 1;
-            labelWinRate.Text = "Win rate: ";
             // 
             // buttonClose
             // 
-            buttonClose.Location = new System.Drawing.Point(3, 73);
+            buttonClose.Location = new Point(3, 73);
             buttonClose.Name = "buttonClose";
-            buttonClose.Size = new System.Drawing.Size(94, 29);
+            buttonClose.Size = new Size(94, 29);
             buttonClose.TabIndex = 9;
             buttonClose.Text = "Close";
             buttonClose.UseVisualStyleBackColor = true;
             // 
+            // labelWinRate
+            // 
+            labelWinRate.AutoSize = true;
+            labelWinRate.Location = new Point(11, 38);
+            labelWinRate.Name = "labelWinRate";
+            labelWinRate.Size = new Size(72, 20);
+            labelWinRate.TabIndex = 1;
+            labelWinRate.Text = "Win rate: ";
+            // 
+            // labelMatches
+            // 
+            labelMatches.AutoSize = true;
+            labelMatches.Location = new Point(11, 6);
+            labelMatches.Name = "labelMatches";
+            labelMatches.Size = new Size(104, 20);
+            labelMatches.TabIndex = 0;
+            labelMatches.Text = "Total matches:";
+            labelMatches.Click += label5_Click;
+            // 
             // HistoryForm
             // 
-            ClientSize = new System.Drawing.Size(910, 461);
+            ClientSize = new Size(910, 461);
             Controls.Add(panel3);
             Controls.Add(dataGridViewList);
             Controls.Add(panel1);
             Controls.Add(panel2);
+            Icon = (Icon)resources.GetObject("$this.Icon");
             Name = "HistoryForm";
             Text = "Game Caro - Match History";
             panel2.ResumeLayout(false);

@@ -173,8 +173,8 @@ namespace Caro.Client.UI.Forms
             Button btn = board[x, y];
 
             btn.BackgroundImage = value == 1
-                ? Properties.Resources.x
-                : Properties.Resources.o;
+                ? Properties.Resources.X
+                : Properties.Resources.O;
 
             btn.BackgroundImageLayout = ImageLayout.Stretch;
 
@@ -281,16 +281,16 @@ namespace Caro.Client.UI.Forms
             if (isMyTurn)
             {
                 pictureIconTurn.Image = myValue == 1
-                    ? Properties.Resources.x
-                    : Properties.Resources.o;
+                    ? Properties.Resources.X
+                    : Properties.Resources.O;
 
                 labelStatus.Text = "Your Turn";
             }
             else
             {
                 pictureIconTurn.Image = myValue == 1
-                    ? Properties.Resources.o
-                    : Properties.Resources.x;
+                    ? Properties.Resources.O
+                    : Properties.Resources.X;
 
                 labelStatus.Text = "Waiting...";
             }

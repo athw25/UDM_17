@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text.Json;
 using System.Windows.Forms;
 
+
 namespace Caro.Client.UI.Forms
 {
     public class LobbyForm : Form
@@ -109,8 +110,7 @@ namespace Caro.Client.UI.Forms
                 case CommandType.StartGame:
                     string opponent = packet.Data;
 
-                    UIHelper.SwitchForm(this, new GameForm(username, opponent));
-                    break;
+                    UIHelper.SwitchForm(this, new GameForm(username, opponent, socket, true)); break;
             }
         }
 
@@ -169,6 +169,7 @@ namespace Caro.Client.UI.Forms
         // ================= DESIGN (GIỮ NGUYÊN) =================
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(LobbyForm));
             panel2 = new Panel();
             label2 = new Label();
             label1 = new Label();
@@ -186,68 +187,135 @@ namespace Caro.Client.UI.Forms
             panel1.SuspendLayout();
             panel3.SuspendLayout();
             SuspendLayout();
-
+            // 
+            // panel2
+            // 
             panel2.Controls.Add(label2);
             panel2.Controls.Add(label1);
             panel2.Location = new System.Drawing.Point(12, 12);
+            panel2.Name = "panel2";
             panel2.Size = new System.Drawing.Size(519, 109);
-
+            panel2.TabIndex = 2;
+            // 
+            // label2
+            // 
             label2.AutoSize = true;
             label2.Font = new System.Drawing.Font("Forte", 22.2F);
             label2.ForeColor = System.Drawing.Color.Firebrick;
             label2.Location = new System.Drawing.Point(207, 57);
+            label2.Name = "label2";
+            label2.Size = new System.Drawing.Size(105, 41);
+            label2.TabIndex = 0;
             label2.Text = "Lobby";
-
+            // 
+            // label1
+            // 
             label1.AutoSize = true;
             label1.Font = new System.Drawing.Font("Showcard Gothic", 22.2F);
             label1.Location = new System.Drawing.Point(143, 11);
+            label1.Name = "label1";
+            label1.Size = new System.Drawing.Size(223, 46);
+            label1.TabIndex = 1;
             label1.Text = "Game Caro";
-
+            // 
+            // panel1
+            // 
             panel1.Controls.Add(labelStatus);
             panel1.Controls.Add(label3);
             panel1.Controls.Add(listBoxPlayer);
             panel1.Location = new System.Drawing.Point(12, 127);
+            panel1.Name = "panel1";
             panel1.Size = new System.Drawing.Size(238, 241);
-
+            panel1.TabIndex = 1;
+            // 
+            // labelStatus
+            // 
             labelStatus.Location = new System.Drawing.Point(15, 30);
+            labelStatus.Name = "labelStatus";
+            labelStatus.Size = new System.Drawing.Size(100, 23);
+            labelStatus.TabIndex = 0;
             labelStatus.Text = "Status:";
-
+            // 
+            // label3
+            // 
             label3.Location = new System.Drawing.Point(15, 10);
+            label3.Name = "label3";
+            label3.Size = new System.Drawing.Size(100, 23);
+            label3.TabIndex = 1;
             label3.Text = "Player List";
-
+            // 
+            // listBoxPlayer
+            // 
             listBoxPlayer.Location = new System.Drawing.Point(15, 64);
+            listBoxPlayer.Name = "listBoxPlayer";
             listBoxPlayer.Size = new System.Drawing.Size(208, 144);
-
+            listBoxPlayer.TabIndex = 2;
+            // 
+            // panel3
+            // 
             panel3.Controls.Add(label4);
             panel3.Controls.Add(buttonLogout);
             panel3.Controls.Add(buttonHistory);
             panel3.Controls.Add(buttonRefresh);
             panel3.Controls.Add(buttonChallenge);
             panel3.Location = new System.Drawing.Point(293, 127);
+            panel3.Name = "panel3";
             panel3.Size = new System.Drawing.Size(238, 241);
-
+            panel3.TabIndex = 0;
+            // 
+            // label4
+            // 
             label4.Location = new System.Drawing.Point(25, 10);
+            label4.Name = "label4";
+            label4.Size = new System.Drawing.Size(100, 23);
+            label4.TabIndex = 0;
             label4.Text = "Actions";
-
-            buttonChallenge.Text = "Challenge";
-            buttonChallenge.Location = new System.Drawing.Point(25, 61);
-
-            buttonRefresh.Text = "Refresh";
-            buttonRefresh.Location = new System.Drawing.Point(25, 96);
-
-            buttonHistory.Text = "History";
-            buttonHistory.Location = new System.Drawing.Point(25, 131);
-
-            buttonLogout.Text = "Logout";
+            // 
+            // buttonLogout
+            // 
             buttonLogout.Location = new System.Drawing.Point(25, 166);
-
+            buttonLogout.Name = "buttonLogout";
+            buttonLogout.Size = new System.Drawing.Size(173, 29);
+            buttonLogout.TabIndex = 1;
+            buttonLogout.Text = "Logout";
+            // 
+            // buttonHistory
+            // 
+            buttonHistory.Location = new System.Drawing.Point(25, 131);
+            buttonHistory.Name = "buttonHistory";
+            buttonHistory.Size = new System.Drawing.Size(173, 31);
+            buttonHistory.TabIndex = 2;
+            buttonHistory.Text = "History";
+            // 
+            // buttonRefresh
+            // 
+            buttonRefresh.Location = new System.Drawing.Point(25, 96);
+            buttonRefresh.Name = "buttonRefresh";
+            buttonRefresh.Size = new System.Drawing.Size(173, 31);
+            buttonRefresh.TabIndex = 3;
+            buttonRefresh.Text = "Refresh";
+            // 
+            // buttonChallenge
+            // 
+            buttonChallenge.Location = new System.Drawing.Point(25, 61);
+            buttonChallenge.Name = "buttonChallenge";
+            buttonChallenge.Size = new System.Drawing.Size(173, 31);
+            buttonChallenge.TabIndex = 4;
+            buttonChallenge.Text = "Challenge";
+            // 
+            // LobbyForm
+            // 
+            ClientSize = new System.Drawing.Size(543, 429);
             Controls.Add(panel3);
             Controls.Add(panel1);
             Controls.Add(panel2);
-
+            Icon = (System.Drawing.Icon)resources.GetObject("$this.Icon");
+            Name = "LobbyForm";
             Text = "Game Caro - Lobby";
-            ClientSize = new System.Drawing.Size(543, 429);
-
+            panel2.ResumeLayout(false);
+            panel2.PerformLayout();
+            panel1.ResumeLayout(false);
+            panel3.ResumeLayout(false);
             ResumeLayout(false);
         }
     }
