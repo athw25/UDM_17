@@ -22,3 +22,15 @@ d:/UDM_17/Code/NetworkCaroGame/src/Caro.Shared/obj/Debug/net8.0/ref/Caro.Shared.
 /Users/htk/Desktop/Game Caro/UDM_17/Code/NetworkCaroGame/src/Caro.Shared/obj/Debug/net8.0/refint/Caro.Shared.dll
 /Users/htk/Desktop/Game Caro/UDM_17/Code/NetworkCaroGame/src/Caro.Shared/obj/Debug/net8.0/Caro.Shared.pdb
 /Users/htk/Desktop/Game Caro/UDM_17/Code/NetworkCaroGame/src/Caro.Shared/obj/Debug/net8.0/ref/Caro.Shared.dll
+E:\LTM\UDM_17\Code\NetworkCaroGame\src\Caro.Shared\bin\Debug\net8.0\Caro.Shared.deps.json
+E:\LTM\UDM_17\Code\NetworkCaroGame\src\Caro.Shared\bin\Debug\net8.0\Caro.Shared.dll
+E:\LTM\UDM_17\Code\NetworkCaroGame\src\Caro.Shared\bin\Debug\net8.0\Caro.Shared.pdb
+E:\LTM\UDM_17\Code\NetworkCaroGame\src\Caro.Shared\obj\Debug\net8.0\Caro.Shared.GeneratedMSBuildEditorConfig.editorconfig
+E:\LTM\UDM_17\Code\NetworkCaroGame\src\Caro.Shared\obj\Debug\net8.0\Caro.Shared.AssemblyInfoInputs.cache
+E:\LTM\UDM_17\Code\NetworkCaroGame\src\Caro.Shared\obj\Debug\net8.0\Caro.Shared.AssemblyInfo.cs
+E:\LTM\UDM_17\Code\NetworkCaroGame\src\Caro.Shared\obj\Debug\net8.0\Caro.Shared.csproj.CoreCompileInputs.cache
+E:\LTM\UDM_17\Code\NetworkCaroGame\src\Caro.Shared\obj\Debug\net8.0\Caro.Shared.sourcelink.json
+E:\LTM\UDM_17\Code\NetworkCaroGame\src\Caro.Shared\obj\Debug\net8.0\Caro.Shared.dll
+E:\LTM\UDM_17\Code\NetworkCaroGame\src\Caro.Shared\obj\Debug\net8.0\refint\Caro.Shared.dll
+E:\LTM\UDM_17\Code\NetworkCaroGame\src\Caro.Shared\obj\Debug\net8.0\Caro.Shared.pdb
+E:\LTM\UDM_17\Code\NetworkCaroGame\src\Caro.Shared\obj\Debug\net8.0\ref\Caro.Shared.dll

@@ -18,6 +18,14 @@ namespace Caro.Shared.Network
         Chat,
         PlayerDisconnected,
         GetHistory,
-        HistoryResponse
+        HistoryResponse,
+        Win,
+        Disconnect,
+        MatchFinished,
+        PlayerList,
+        Challenge,
+        Accept,
+        Reject,
+        HistoryData
     }
 }
