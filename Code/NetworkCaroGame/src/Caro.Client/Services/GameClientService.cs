@@ -27,6 +27,10 @@ namespace Caro.Client.Services
         public event Action<ChallengeInfo>? OnChallengeResponse;
         public event Action<string>? OnStartGame;                         // payload/data: who goes first or opponent info
         public event Action<MoveInfo>? OnMoveReceived;
+        public event Action<string>? OnGameOver;
+        public event Action? OnTimeOut;
+        public event Action<string>? OnPlayerDisconnected;
+        public event Action<string>? OnChatReceived;
         public event Action<List<string>>? OnHistoryResponse;
 
         private GameClientService() { }
@@ -97,10 +101,27 @@ namespace Caro.Client.Services
             _socket.SendMove(move);
         }
 
+        public void SendGameOver(string winnerName)
+        {
+            if (_socket == null) throw new InvalidOperationException("Not connected");
+            _socket.Send(new Packet { Command = CommandType.GameOver, Data = Serializer.Serialize(winnerName) });
+        }
+
+        public void SendTimeOut()
+        {
+            if (_socket == null) throw new InvalidOperationException("Not connected");
+            _socket.Send(new Packet { Command = CommandType.TimeOut, Data = "timeout" });
+        }
+
+        public void SendChat(string message)
+        {
+            if (_socket == null) throw new InvalidOperationException("Not connected");
+            _socket.Send(new Packet { Command = CommandType.Chat, Data = message });
+        }
+
         public void RequestHistory(string username)
         {
             if (_socket == null) throw new InvalidOperationException("Not connected");
-            // Use the simple Request pattern; UI subscribes to OnHistoryResponse.
             _socket.Send(new Packet { Command = CommandType.GetHistory, Data = username });
         }
 
@@ -205,6 +226,25 @@ namespace Caro.Client.Services
                         }
                         break;
 
+                    case CommandType.GameOver:
+                    case CommandType.Win:
+                    case CommandType.MatchFinished:
+                        OnGameOver?.Invoke(content);
+                        break;
+
+                    case CommandType.TimeOut:
+                        OnTimeOut?.Invoke();
+                        break;
+
+                    case CommandType.PlayerDisconnected:
+                    case CommandType.Disconnect:
+                        OnPlayerDisconnected?.Invoke(content);
+                        break;
+
+                    case CommandType.Chat:
+                        OnChatReceived?.Invoke(content);
+                        break;
+
                     case CommandType.HistoryResponse:
                     case CommandType.HistoryData:
                         if (!string.IsNullOrEmpty(content))
@@ -222,7 +262,6 @@ namespace Caro.Client.Services
                         break;
 
                     default:
-                        // Unknown/other commands can be handled by consumers through OnLoginSuccess (raw packet) or by direct socket subscription
                         break;
                 }
             }
