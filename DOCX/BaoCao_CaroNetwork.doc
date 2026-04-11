@@ -1,0 +1,70 @@
+﻿<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
+<head>
+<meta charset='utf-8'>
+<title>Báo cáo đồ án</title>
+<style>
+body { font-family: 'Times New Roman', serif; font-size: 14pt; line-height: 1.5; text-align: justify; }
+h1 { text-align: center; color: #b71c1c; font-size: 20pt; font-weight: bold; }
+h2 { color: #1565c0; font-size: 16pt; font-weight: bold; margin-top: 20px;}
+h3 { color: #2e7d32; font-size: 14pt; font-weight: bold; font-style: italic;}
+p, li { margin-bottom: 10px; }
+ul { margin-top: 0; }
+</style>
+</head>
+<body>
+
+<h1>BÁO CÁO TỔNG KẾT ĐỒ ÁN MÔN HỌC</h1>
+<p style='text-align: center; font-weight: bold;'>ĐỀ TÀI: PHÁT TRIỂN GAME CARO MULTIPLAYER BẰNG KIẾN TRÚC CLIENT-SERVER (TCP/IP)</p>
+
+<h2>I. THÔNG TIN VỀ DỰ ÁN</h2>
+
+<h3>1. Lý do lựa chọn đề tài</h3>
+<p>Trong bối cảnh kết nối internet ngày càng phát triển, việc lập trình ứng dụng có khả năng kết nối mạng thời gian thực là một yêu cầu tất yếu của kỹ sư phần mềm. Trò chơi Caro là một tựa game trí tuệ phổ biến với luật chơi đơn giản, rất phù hợp để làm nền tảng tập trung nghiên cứu kiến trúc mạng. Chúng em chọn đề tài này nhằm hiện thực hóa lý thuyết về giao thức mạng (Networking TCP/IP), kỹ thuật đa luồng (Multithreading) và cách thức đồng bộ hóa trạng thái giữa các máy khách tách biệt về mặt vật lý.</p>
+
+<h3>2. Mục đích dự án</h3>
+<p>Dự án hướng đến hai mục tiêu cốt lõi: Thứ nhất, xây dựng một máy chủ (Server) mạnh mẽ, có khả năng chịu tải hàng chục kết nối đồng thời mà không bị ngắt quãng. Thứ hai, tạo ra một ứng dụng máy khách (Client) với giao diện người dùng mượt mà, phân chia các luồng hiển thị và luồng mạng đan xen hợp lý để đem lại trải nghiệm thi đấu thời gian thực (real-time) tốt nhất.</p>
+
+<h3>3. Lý thuyết tóm tắt</h3>
+<ul>
+<li><strong>Kiến trúc Client - Server:</strong> Mô hình chia tách rõ ràng trách nhiệm. Server đóng vai trò trung tâm phân phối, trong khi Client xử lý hiển thị và tương tác người dùng.</li>
+<li><strong>Giao thức TCP (Transmission Control Protocol):</strong> Sử dụng phương thức kết nối liên tục, đảm bảo 100% gói tin đi tới đích theo đúng thứ tự, khắc phục tình trạng mất gói tin trong game mạng.</li>
+<li><strong>Luồng và khóa (Threads & Synchronization / lock):</strong>Sử dụng <code>Task</code> để phân bổ vòng lặp lắng nghe kết nối, và dùng <code>lock</code> để cô lập khu vực bộ nhớ khi gửi Broadcast, tránh xung đột tiến trình (Race Condition).</li>
+<li><strong>Định dạng dữ liệu JSON:</strong> Toàn bộ gói tin (Packet) giao tiếp giữa 2 máy được mã hóa thành cấu trúc JSON bằng System.Text.Json để bảo đảm tính thống nhất và tương thích đa nền tảng.</li>
+</ul>
+
+<h2>II. THÀNH TỰU VÀ ĐÁNH GIÁ KẾT QUẢ</h2>
+
+<h3>1. Những điều đã làm được (Thành tựu)</h3>
+<ul>
+<li>✅ <strong>Hạ tầng Máy chủ (Server Core):</strong> Xây dựng thành công luồng bắt sự kiện TCP, tổ chức <code>GameRoom</code> hoàn chỉnh và bảo mật đa luồng tuyệt đối (Thread-safe) trong danh sách người chơi.</li>
+<li>✅ <strong>Giao diện và Logic (Client/Logic):</strong> Tạo ra bàn cờ lưới Caro 15x15 tiêu chuẩn, xử lý luật chẵn - lẻ luân phiên đánh, đi kèm thuật toán kiểm tra Win (thắng) đa hướng.</li>
+<li>✅ <strong>Xử lý hàng đợi:</strong> Xử lý mượt mà độ trễ (latency ping) bằng cơ chế bất đồng bộ <code>async/await</code>, giúp trò chơi không bị treo UI khi đang đợi phản hồi từ mạng.</li>
+<li>✅ <strong>Quản lý phiên bản (Git):</strong> Vận dụng quy trình hợp nhất mã (Merge Git) thành thạo qua mô hình chia branch chức năng riêng biêt.</li>
+</ul>
+
+<h3>2. Những điều chưa làm được</h3>
+<ul>
+<li>❌ <strong>Cơ sở dữ liệu vĩnh viễn (Database):</strong> Hiện tại mọi dữ liệu phiên chơi, lịch sử và đăng nhập mới chỉ lưu gọn trong bộ nhớ máy (In-Memory) hoặc File Log. Nhóm chưa tích hợp hệ thống lưu trữ RDBMS chuyên nghiệp như SQL Server hay MySQL.</li>
+<li>❌ <strong>Cơ chế tìm trận nâng cao:</strong> Matchmaking mới ở mức khởi tạo phòng nhanh chóng giữa 2 người ngẫu nhiên, chưa có hệ thống phân ranh giới điểm Elo hay hệ thống Rank.</li>
+<li>❌ <strong>Mã hóa bảo mật:</strong> Gói tin truyền đi tuy là JSON nhưng là văn bản thuần tuý (Plain Text), chưa ứng dụng mã hóa mã RSA hay SSL truyền tải.</li>
+</ul>
+
+<h3>3. Những khó khăn gặp phải</h3>
+<ul>
+<li>⚠️ <strong>Hiện tượng phân mảnh TCP (TCP fragmentation):</strong> Do stream TCP gộp nhiều gói tin nhỏ gửi cùng lúc vào làm một búi dữ liệu, gây ra ngoại lệ khi giải mã JSON (hiện tượng 2 dấu ngoặc nhọn dính liền). Nhóm đã phải dùng ký tự <code>\n (Xuống dòng)</code> làm cờ vạch ngăn cách chốt gói tin.</li>
+<li>⚠️ <strong>Xung đột luồng UI (Cross-thread Invalid Operation):</strong> Xảy ra khi Thread của mạng LAN gián tiếp cố thao tác đổi màu nút bấm của Thread thuộc Form UI. Nhóm đã vượt qua bằng kỹ thuật Invoke/BeginInvoke.</li>
+<li>⚠️ <strong>Xung đột Git (Merge Conflicts):</strong> Ở giai đoạn đầu, nhiều thành viên đụng chạm chung vào thư mục Shared Models gây ra lỗi không trộn code được. Nhóm khắc phục bằng cách thiết lập cấu trúc interface trung gian bóc tách vai trò theo chiều dọc.</li>
+</ul>
+
+<h3>4. Bài học kinh nghiệm & Cần học hỏi (Lessons Learned)</h3>
+<ul>
+<li>📌 <strong>Phân chia quyền hạn lập trình rõ ràng (Tách biệt logic):</strong> Trải nghiệm đắt giá nhất là kinh nghiệm định ranh giới (Boundaries). Phải chia module cụ thể (Mạng riêng, Data riêng, UI riêng).</li>
+<li>📌 <strong>Tầm quan trọng của Interface/Stubbing:</strong> Việc tạo ra các hàm rỗng (stub) ở lớp Logic trước để Coder mạng có thể cắm đầu Cáp vào làm việc đã giúp hiệu suất làm việc nhóm tăng gấp đôi.</li>
+<li>📌 <strong>Bảo trì bộ nhớ (Memory Management):</strong> Rút kinh nghiệm luôn phải Dispose/Close toàn bộ Socket, StreamWriter và StreamReader khi Client mất mạng để chống hiện tượng Rò rỉ Memory Leak trên máy chủ.</li>
+</ul>
+
+<br><br>
+<hr>
+<p style='text-align: right; font-style: italic;'>-- Báo cáo được biên soạn và tổng hợp bởi Nhóm Phát Triển --</p>
+</body>
+</html>
