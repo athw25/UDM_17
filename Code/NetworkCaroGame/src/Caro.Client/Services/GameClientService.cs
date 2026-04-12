@@ -17,21 +17,21 @@ namespace Caro.Client.Services
         private static GameClientService _instance;
         public static GameClientService Instance => _instance ??= new GameClientService();
 
-        private ClientSocket? _socket;
+        private ClientSocket _socket;
 
         // Events expected by UI
-        public event Action<Packet>? OnLoginSuccess;                       // raw packet (keeps compatibility)
-        public event Action<List<PlayerInfo>>? OnUpdatePlayerList;         // when server sends detailed player info
-        public event Action<List<string>>? OnPlayerList;                  // when server sends simple player name list
-        public event Action<ChallengeInfo>? OnChallengeRequest;
-        public event Action<ChallengeInfo>? OnChallengeResponse;
-        public event Action<string>? OnStartGame;                         // payload/data: who goes first or opponent info
-        public event Action<MoveInfo>? OnMoveReceived;
-        public event Action<string>? OnGameOver;
-        public event Action? OnTimeOut;
-        public event Action<string>? OnPlayerDisconnected;
-        public event Action<string>? OnChatReceived;
-        public event Action<List<string>>? OnHistoryResponse;
+        public event Action<Packet> OnLoginSuccess;                       // raw packet (keeps compatibility)
+        public event Action<List<PlayerInfo>> OnUpdatePlayerList;         // when server sends detailed player info
+        public event Action<List<string>> OnPlayerList;                  // when server sends simple player name list
+        public event Action<ChallengeInfo> OnChallengeRequest;
+        public event Action<ChallengeInfo> OnChallengeResponse;
+        public event Action<string> OnStartGame;                         // payload/data: who goes first or opponent info
+        public event Action<MoveInfo> OnMoveReceived;
+        public event Action<string> OnGameOver;
+        public event Action OnTimeOut;
+        public event Action<string> OnPlayerDisconnected;
+        public event Action<string> OnChatReceived;
+        public event Action<List<string>> OnHistoryResponse;
 
         private GameClientService() { }
 
@@ -62,7 +62,7 @@ namespace Caro.Client.Services
         }
 
         // Expose raw socket for advanced scenarios (forms currently use ClientSocket directly in the project)
-        public ClientSocket? Socket => _socket;
+        public ClientSocket Socket => _socket;
 
         // ========== REQUESTS / ACTIONS ==========
 
