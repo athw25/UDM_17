@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -92,6 +92,7 @@ namespace Caro.Server.Core
             Console.WriteLine($"Client {client.PlayerInfo.Name ?? "Unknown"} disconnected.");
         }
 
+        public ClientHandler GetClientByName(string name) { lock (_clientsLock) { return _clients.FirstOrDefault(c => c.PlayerInfo.Name == name); } }
         public void BroadcastPlayerList()
         {
             List<PlayerInfo> players;

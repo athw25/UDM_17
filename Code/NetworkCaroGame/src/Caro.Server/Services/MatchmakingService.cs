@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using Caro.Server.Core;
 using Caro.Shared.Network;
@@ -10,10 +10,10 @@ namespace Caro.Server.Services
     {
         private ServerManager _server;
 
-        // Danh sách người chơi đang chờ ghép
+        // Danh sÃ¡ch ngÆ°á»i chÆ¡i Ä‘ang chá» ghÃ©p
         private List<ClientHandler> _waitingPlayers = new List<ClientHandler>();
 
-        // Danh sách phòng đang chơi
+        // Danh sÃ¡ch phÃ²ng Ä‘ang chÆ¡i
         private List<GameRoom> _rooms = new List<GameRoom>();
 
         public MatchmakingService(ServerManager server)
@@ -26,6 +26,16 @@ namespace Caro.Server.Services
             switch (packet.Command)
             {
                 case CommandType.ChallengeRequest:
+                    HandleFindMatch(client);
+                    break;
+                case CommandType.Challenge:
+                    HandleDirectChallenge(client, packet);
+                    break;
+                case CommandType.Accept:
+                    HandleChallengeAccept(client, packet);
+                    break;
+                case CommandType.Reject:
+                    HandleChallengeReject(client, packet);
                     HandleFindMatch(client);
                     break;
 
@@ -49,11 +59,11 @@ namespace Caro.Server.Services
 
             if (_waitingPlayers.Count > 0)
             {
-                // Lấy người chơi đầu tiên trong hàng đợi
+                // Láº¥y ngÆ°á»i chÆ¡i Ä‘áº§u tiÃªn trong hÃ ng Ä‘á»£i
                 var opponent = _waitingPlayers[0];
                 _waitingPlayers.RemoveAt(0);
 
-                // Tạo phòng
+                // Táº¡o phÃ²ng
                 var room = new GameRoom(opponent, client, this);
                 _rooms.Add(room);
 
@@ -65,6 +75,36 @@ namespace Caro.Server.Services
             {
                 _waitingPlayers.Add(client);
                 Console.WriteLine($"{client.PlayerInfo.Name} is waiting...");
+            }
+        }
+
+                private void HandleDirectChallenge(ClientHandler client, Packet packet)
+        {
+            string targetName = packet.Payload;
+            var targetClient = _server.GetClientByName(targetName);
+            if (targetClient != null)
+            {
+                targetClient.SendPacket(new Packet { Command = CommandType.Challenge, Payload = client.PlayerInfo.Name });
+            }
+        }
+        private void HandleChallengeAccept(ClientHandler client, Packet packet)
+        {
+            string challengerName = packet.Payload;
+            var challenger = _server.GetClientByName(challengerName);
+            if (challenger != null)
+            {
+                var room = new GameRoom(challenger, client, this);
+                _rooms.Add(room);
+                room.StartGame();
+            }
+        }
+        private void HandleChallengeReject(ClientHandler client, Packet packet)
+        {
+            string challengerName = packet.Payload;
+            var challenger = _server.GetClientByName(challengerName);
+            if (challenger != null)
+            {
+                challenger.SendPacket(new Packet { Command = CommandType.Reject, Payload = client.PlayerInfo.Name });
             }
         }
 
@@ -82,7 +122,7 @@ namespace Caro.Server.Services
         {
             Console.WriteLine($"{client.PlayerInfo.Name} disconnected");
 
-            // Nếu đang chờ thì xóa khỏi hàng đợi
+            // Náº¿u Ä‘ang chá» thÃ¬ xÃ³a khá»i hÃ ng Ä‘á»£i
             _waitingPlayers.Remove(client);
 
             var room = FindRoomByClient(client);
@@ -90,7 +130,7 @@ namespace Caro.Server.Services
             {
                 var opponent = room.Player1 == client ? room.Player2 : room.Player1;
 
-                // báo cho đối thủ
+                // bÃ¡o cho Ä‘á»‘i thá»§
                 opponent.SendPacket(new Packet
                 {
                     Command = CommandType.PlayerDisconnected,
@@ -122,3 +162,5 @@ namespace Caro.Server.Services
         }
     }
 }
+
+
