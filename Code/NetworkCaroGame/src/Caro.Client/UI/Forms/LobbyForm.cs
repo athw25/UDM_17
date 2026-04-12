@@ -136,7 +136,7 @@ namespace Caro.Client.UI.Forms
 
             socket.Send(new Packet
             {
-                Command = CommandType.Challenge,
+                Command = CommandType.ChallengeRequest,
                 Data = opponent
             });
         }

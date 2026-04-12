@@ -112,7 +112,7 @@ namespace Caro.Client.Network
             await SendAsync(new Packet
             {
                 Command = CommandType.GetHistory,
-                Data = username
+                Payload = Caro.Shared.Utils.Serializer.Serialize(username)
             });
 
             var result = await tcs.Task;
@@ -128,7 +128,7 @@ namespace Caro.Client.Network
             Send(new Packet
             {
                 Command = CommandType.Login,
-                Data = username
+                Payload = Caro.Shared.Utils.Serializer.Serialize(username)
             });
         }
 
