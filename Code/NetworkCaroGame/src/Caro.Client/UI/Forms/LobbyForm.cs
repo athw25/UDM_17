@@ -1,4 +1,4 @@
-using Caro.Client.Network;
+﻿using Caro.Client.Network;
 using Caro.Client.UI.Helpers;
 using Caro.Shared.Network;
 using System;
@@ -35,7 +35,7 @@ namespace Caro.Client.UI.Forms
             username = user;
             this.socket = socket;
 
-            InitializeComponent(); // GIỮ NGUYÊN UI
+            InitializeComponent(); // GIá»® NGUYÃŠN UI
 
             // UI config
             buttonChallenge.Enabled = false;
@@ -50,7 +50,7 @@ namespace Caro.Client.UI.Forms
             buttonHistory.Click += BtnHistory_Click;
             buttonLogout.Click += BtnLogout_Click;
 
-            // nhận data từ server
+            // nháº­n data tá»« server
             this.socket.OnReceive += HandlePacket;
         }
 
@@ -65,8 +65,8 @@ namespace Caro.Client.UI.Forms
 
             switch (packet.Command)
             {
-                case CommandType.PlayerList:
-                    var players = JsonSerializer.Deserialize<List<string>>(packet.Data);
+                case CommandType.UpdatePlayerList:
+                    var players = Caro.Shared.Utils.Serializer.Deserialize<System.Collections.Generic.List<Caro.Shared.Models.PlayerInfo>>(packet.Payload).Select(p => p.Name).ToList();
 
                     listBoxPlayer.DataSource = null;
                     listBoxPlayer.DataSource = players
@@ -146,8 +146,8 @@ namespace Caro.Client.UI.Forms
         {
             socket.Send(new Packet
             {
-                Command = CommandType.PlayerList,
-                Data = ""
+                Command = CommandType.GetPlayers,
+                Payload = ""
             });
         }
 
@@ -166,7 +166,7 @@ namespace Caro.Client.UI.Forms
             UIHelper.SwitchForm(this, new LoginForm());
         }
 
-        // ================= DESIGN (GIỮ NGUYÊN) =================
+        // ================= DESIGN (GIá»® NGUYÃŠN) =================
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(LobbyForm));
