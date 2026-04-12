@@ -77,7 +77,7 @@ namespace Caro.Client.UI.Forms
             textBoxServer.Name = "textBoxServer";
             textBoxServer.Size = new System.Drawing.Size(232, 27);
             textBoxServer.TabIndex = 1;
-            textBoxServer.Text = "IP Server";
+            textBoxServer.Text = "127.0.0.1"; textBoxServer.Enabled = false;
             textBoxServer.TextChanged += textBoxServer_TextChanged;
             // 
             // textBoxPort
@@ -86,7 +86,7 @@ namespace Caro.Client.UI.Forms
             textBoxPort.Name = "textBoxPort";
             textBoxPort.Size = new System.Drawing.Size(232, 27);
             textBoxPort.TabIndex = 2;
-            textBoxPort.Text = "Port";
+            textBoxPort.Text = "8888"; textBoxPort.Enabled = false;
             // 
             // panel2
             // 
