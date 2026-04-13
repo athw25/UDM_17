@@ -40,6 +40,15 @@ namespace Caro.Client.UI.Forms
             buttonRefresh.Click += async (s, e) => await LoadData();
             buttonClose.Click += (s, e) => this.Close();
 
+            buttonExport = new Button();
+            buttonExport.Location = new Point(110, 139);
+            buttonExport.Name = "buttonExport";
+            buttonExport.Size = new Size(110, 29);
+            buttonExport.Text = "Export to TXT";
+            buttonExport.UseVisualStyleBackColor = true;
+            buttonExport.Click += ButtonExport_Click;
+            panel1.Controls.Add(buttonExport);
+
             foreach (DataGridViewColumn col in dataGridViewList.Columns)
             {
                 col.Visible = true;
@@ -196,7 +205,6 @@ namespace Caro.Client.UI.Forms
             }
         }
 
-        // ================= STATS =================
         private void UpdateStats(List<MatchHistory> data)
         {
             int total = data.Count;
@@ -204,6 +212,53 @@ namespace Caro.Client.UI.Forms
             labelMatches.Text = $"Total matches: {total}";
             labelWinRate.Text = $"Win rate: {(total == 0 ? 0 : win * 100 / total)}%";
         }      
+
+        private void ButtonExport_Click(object sender, EventArgs e)
+        {
+            if (allData == null || allData.Count == 0)
+            {
+                MessageBox.Show("No data to export!", "Export", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+
+            using (SaveFileDialog sfd = new SaveFileDialog())
+            {
+                sfd.Filter = "Text Output (*.txt)|*.txt";
+                sfd.Title = "Export Match History";
+                sfd.FileName = $"CaroHistory_{username}_{DateTime.Now:yyyyMMdd_HHmmss}.txt";
+
+                if (sfd.ShowDialog() == DialogResult.OK)
+                {
+                    try
+                    {
+                        var lines = new List<string>();
+                        lines.Add($"Player: {username}");
+                        lines.Add($"Time Exported: {DateTime.Now:yyyy-MM-dd HH:mm:ss}");
+                        lines.Add(new string('-', 60));
+                        lines.Add(string.Format("{0,-20} | {1,-15} | {2,-10}", "Match Time", "Opponent", "Result"));
+                        lines.Add(new string('-', 60));
+
+                        foreach (DataGridViewRow row in dataGridViewList.Rows)
+                        {
+                            if (!row.IsNewRow)
+                            {
+                                string t = row.Cells[0].Value?.ToString() ?? "";
+                                string o = row.Cells[1].Value?.ToString() ?? "";
+                                string r = row.Cells[2].Value?.ToString() ?? "";
+                                lines.Add(string.Format("{0,-20} | {1,-15} | {2,-10}", t, o, r));
+                            }
+                        }
+
+                        System.IO.File.WriteAllLines(sfd.FileName, lines);
+                        MessageBox.Show("Export finished successfully!", "Export", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show("Error writing to file: " + ex.Message, "Export Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                }
+            }
+        }
 
         private void label2_Click(object sender, System.EventArgs e)
         {
@@ -480,5 +535,6 @@ namespace Caro.Client.UI.Forms
         private Label labelMatches;
         private Button buttonClose;
         private Label labelWinRate;
+        private Button buttonExport;
     }
 }
