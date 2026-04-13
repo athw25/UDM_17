@@ -160,6 +160,20 @@ namespace Caro.Client.UI.Forms
                 })
             });
 
+            if (CheckWin(p.X, p.Y))
+            {
+                socket.Send(new Packet
+                {
+                    Command = CommandType.GameOver,
+                    Data = JsonSerializer.Serialize(myName)
+                });
+                
+                labelStatus.Text = "You Win!";
+                DisableBoard();
+                timer.Stop();
+                return;
+            }
+
             isMyTurn = false;
             UpdateTurnUI();
             timer.Stop();
