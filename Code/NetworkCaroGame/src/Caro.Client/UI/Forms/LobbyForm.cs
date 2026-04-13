@@ -165,10 +165,7 @@ namespace Caro.Client.UI.Forms
         // History
         private void BtnHistory_Click(object sender, EventArgs e)
         {
-            buttonHistory.Click += (s, e) =>
-            {
-                new HistoryForm(username, socket).Show();
-            };
+            new HistoryForm(username, socket).Show();
         }
 
         // Logout

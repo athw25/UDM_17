@@ -1,6 +1,7 @@
 //using System.Windows.Forms; namespace Caro.Client.UI.Forms { public class HistoryForm : Form { } }
 using Caro.Client.Network;
 using Caro.Client.UI.Services;
+using Caro.Shared.Models;
 using Caro.Shared.Network;
 using System;
 using System.Collections.Generic;
@@ -480,14 +481,4 @@ namespace Caro.Client.UI.Forms
         private Button buttonClose;
         private Label labelWinRate;
     }
-    // ================= MODEL =================
-    public class MatchHistory
-    {
-        public DateTime Time { get; set; }
-        public string Player1 { get; set; }
-        public string Player2 { get; set; }
-        public string Winner { get; set; }
-        public string Moves { get; set; }
-    }
 }
-

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using Caro.Shared.Models;
 
 namespace Caro.Server.Storage
 {
@@ -22,14 +23,38 @@ namespace Caro.Server.Storage
             }
         }
 
-        public List<string> GetHistory()
+        public List<MatchHistory> GetHistory()
         {
-            var history = new List<string>();
+            var history = new List<MatchHistory>();
             try
             {
                 if (File.Exists(FilePath))
                 {
-                    history.AddRange(File.ReadAllLines(FilePath));
+                    var lines = File.ReadAllLines(FilePath);
+                    foreach (var line in lines)
+                    {
+                        if (string.IsNullOrWhiteSpace(line)) continue;
+                        try
+                        {
+                            // Format: [YYYY-MM-DD HH:mm:ss] Match: P1 vs P2 -> Winner: Win
+                            var timePart = line.Substring(1, 19);
+                            var date = DateTime.Parse(timePart);
+
+                            var rest = line.Substring(22); 
+                            rest = rest.Replace("Match: ", ""); 
+                            var parts = rest.Split(new string[] { " -> Winner: " }, StringSplitOptions.None);
+                            var players = parts[0].Split(new string[] { " vs " }, StringSplitOptions.None);
+
+                            history.Add(new MatchHistory
+                            {
+                                Time = date,
+                                Player1 = players[0].Trim(),
+                                Player2 = players[1].Trim(),
+                                Winner = parts[1].Trim()
+                            });
+                        }
+                        catch { } // Ignore lines with corrupted format
+                    }
                 }
             }
             catch (Exception ex)

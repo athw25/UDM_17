@@ -1,4 +1,4 @@
-﻿using Caro.Client.UI.Forms;
+using Caro.Client.UI.Forms;
 using Caro.Shared.Network;
 using System;
 using System.IO;
@@ -87,22 +87,22 @@ namespace Caro.Client.Network
         }
 
         // ================= GET HISTORY =================
-        public async Task<System.Collections.Generic.List<MatchHistory>> GetHistory(string username)
+        public async Task<System.Collections.Generic.List<Caro.Shared.Models.MatchHistory>> GetHistory(string username)
         {
-            var tcs = new TaskCompletionSource<System.Collections.Generic.List<MatchHistory>>();
+            var tcs = new TaskCompletionSource<System.Collections.Generic.List<Caro.Shared.Models.MatchHistory>>();
 
             void handler(Packet p)
             {
-                if (p.Command == CommandType.HistoryData)
+                if (p.Command == CommandType.HistoryResponse)
                 {
                     try
                     {
-                        var data = JsonSerializer.Deserialize<System.Collections.Generic.List<MatchHistory>>(p.Data);
+                        var data = JsonSerializer.Deserialize<System.Collections.Generic.List<Caro.Shared.Models.MatchHistory>>(p.Data);
                         tcs.TrySetResult(data);
                     }
                     catch
                     {
-                        tcs.TrySetResult(new System.Collections.Generic.List<MatchHistory>());
+                        tcs.TrySetResult(new System.Collections.Generic.List<Caro.Shared.Models.MatchHistory>());
                     }
                 }
             }
