@@ -106,8 +106,13 @@ namespace Caro.Server.Core
             }
         }
 
+        private bool _isDisconnected = false;
+
         public void Disconnect()
         {
+            if (_isDisconnected) return;
+            _isDisconnected = true;
+
             try
             {
                 if (_cts != null && !_cts.IsCancellationRequested)
