@@ -1,4 +1,4 @@
-﻿
+
 using Caro.Client.Network;
 using Caro.Client.UI.Components;
 using Caro.Client.UI.Helpers;
@@ -77,7 +77,8 @@ namespace Caro.Client.UI.Forms
             textBoxServer.Name = "textBoxServer";
             textBoxServer.Size = new System.Drawing.Size(232, 27);
             textBoxServer.TabIndex = 1;
-            textBoxServer.Text = "127.0.0.1"; textBoxServer.Enabled = false;
+            textBoxServer.Text = "127.0.0.1"; 
+            textBoxServer.Enabled = true;
             textBoxServer.TextChanged += textBoxServer_TextChanged;
             // 
             // textBoxPort
@@ -86,7 +87,8 @@ namespace Caro.Client.UI.Forms
             textBoxPort.Name = "textBoxPort";
             textBoxPort.Size = new System.Drawing.Size(232, 27);
             textBoxPort.TabIndex = 2;
-            textBoxPort.Text = "8888"; textBoxPort.Enabled = false;
+            textBoxPort.Text = "8888"; 
+            textBoxPort.Enabled = true;
             // 
             // panel2
             // 
