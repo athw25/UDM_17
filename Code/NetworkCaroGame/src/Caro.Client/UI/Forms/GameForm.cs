@@ -241,9 +241,15 @@ namespace Caro.Client.UI.Forms
                             catch { winnerName = packet.Data; }
 
                             if (winnerName == myName || packet.Data == "WIN")
+                            {
                                 labelStatus.Text = "You Win!";
+                                MessageBox.Show("Congratulations! You won the match.", "Game Over");
+                            }
                             else
+                            {
                                 labelStatus.Text = "You Lose!";
+                                MessageBox.Show("You lost the match. Better luck next time!", "Game Over");
+                            }
 
                             DisableBoard();
                             break;
@@ -449,7 +455,7 @@ namespace Caro.Client.UI.Forms
             buttonConnect.Name = "buttonConnect";
             buttonConnect.Size = new Size(135, 29);
             buttonConnect.TabIndex = 4;
-            buttonConnect.Text = "Connect";
+            buttonConnect.Text = "Return to Lobby";
             buttonConnect.UseVisualStyleBackColor = true;
             buttonConnect.Click += buttonConnect_Click;
             // 
@@ -521,7 +527,8 @@ namespace Caro.Client.UI.Forms
 
         private void buttonConnect_Click(object sender, EventArgs e)
         {
-
+            socket.OnReceive -= HandlePacket;
+            Caro.Client.UI.Helpers.UIHelper.SwitchForm(this, new LobbyForm(myName, socket));
         }
 
         private void pictureBoxIcon_Click(object sender, EventArgs e)
