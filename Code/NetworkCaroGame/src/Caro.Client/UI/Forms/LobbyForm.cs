@@ -63,56 +63,65 @@ namespace Caro.Client.UI.Forms
                 return;
             }
 
-            switch (packet.Command)
+            try
             {
-                case CommandType.UpdatePlayerList:
-                    var players = Caro.Shared.Utils.Serializer.Deserialize<System.Collections.Generic.List<Caro.Shared.Models.PlayerInfo>>(packet.Payload).Select(p => p.Name).ToList();
-
-                    listBoxPlayer.DataSource = null;
-                    listBoxPlayer.DataSource = players
-                        .Where(p => p != username)
-                        .ToList();
-
-                    UpdateStatus();
-                    break;
-
-                case CommandType.Challenge:
-                    string fromUser = packet.Data;
-
-                    var result = MessageBox.Show(
-                        $"{fromUser} challenged you",
-                        "Challenge",
-                        MessageBoxButtons.YesNo);
-
-                    if (result == DialogResult.Yes)
-                    {
-                        socket.Send(new Packet
+                switch (packet.Command)
+                {
+                    case CommandType.PlayerList:
+                    case CommandType.UpdatePlayerList:
                         {
-                            Command = CommandType.Accept,
-                            Data = fromUser
-                        });
-                    }
-                    else
-{
-    socket.Send(new Packet
-    {
-        Command = CommandType.Reject,
-        Data = fromUser
-    });
-}
-                    break;
-                case CommandType.Reject:
-                    {
-                        MessageBox.Show($"{packet.Data} rejected your challenge!");
+                            var players = Caro.Shared.Utils.Serializer.Deserialize<System.Collections.Generic.List<Caro.Shared.Models.PlayerInfo>>(packet.Payload)
+                                                    .Select(p => p.Name)
+                                                    .ToList();
+
+                            listBoxPlayer.DataSource = players.Where(p => p != username).ToList();
+                            UpdateStatus();
+                            break;
+                        }
+
+                    case CommandType.Challenge:
+                        string fromUser = packet.Data;
+
+                        var result = MessageBox.Show(
+                            $"{fromUser} challenged you",
+                            "Challenge",
+                            MessageBoxButtons.YesNo);
+
+                        if (result == DialogResult.Yes)
+                        {
+                            socket.Send(new Packet
+                            {
+                                Command = CommandType.Accept,
+                                Data = fromUser
+                            });
+                        }
+                        else
+                        {
+                            socket.Send(new Packet
+                            {
+                                Command = CommandType.Reject,
+                                Data = fromUser
+                            });
+                        }
                         break;
-                    }
 
-                case CommandType.StartGame:
-                    string opponent = packet.Data; // "1" for Player1, "2" for Player2
-                    bool isHost = packet.Payload == "1";
+                    case CommandType.Reject:
+                        {
+                            MessageBox.Show($"{packet.Data} rejected your challenge!");
+                            break;
+                        }
 
-                    UIHelper.SwitchForm(this, new GameForm(username, opponent, socket, isHost));
-                    break;
+                    case CommandType.StartGame:
+                        string opponent = packet.Data; // "1" for Player1, "2" for Player2
+                        bool isHost = packet.Payload == "1";
+
+                        UIHelper.SwitchForm(this, new GameForm(username, opponent, socket, isHost));
+                        break;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"UI Exception in LobbyForm HandlePacket: {ex.ToString()}");
             }
         }
 

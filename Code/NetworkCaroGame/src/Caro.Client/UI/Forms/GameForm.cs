@@ -1,4 +1,4 @@
-﻿using Caro.Client.Network;
+using Caro.Client.Network;
 using Caro.Shared.Models;
 using Caro.Shared.Network;
 using System;
@@ -200,39 +200,46 @@ namespace Caro.Client.UI.Forms
                 return;
             }
 
-            switch (packet.Command)
+            try
             {
-                case CommandType.Move:
-                    {
-                        var move = JsonSerializer.Deserialize<MoveData>(packet.Data);
+                switch (packet.Command)
+                {
+                    case CommandType.Move:
+                        {
+                            var move = JsonSerializer.Deserialize<MoveData>(packet.Data);
 
-                        MakeMove(move.X, move.Y, move.Player);
+                            MakeMove(move.X, move.Y, move.Player);
 
-                        isMyTurn = true;
-                        UpdateTurnUI();
-                        ResetTimer();
-                        break;
-                    }
+                            isMyTurn = true;
+                            UpdateTurnUI();
+                            ResetTimer();
+                            break;
+                        }
 
-                case CommandType.Win:
-                    {
-                        timer.Stop();
-                        if (packet.Data == "WIN")
-                            labelStatus.Text = "You Win!";
-                        else
-                            labelStatus.Text = "You Lose!";
+                    case CommandType.Win:
+                        {
+                            timer.Stop();
+                            if (packet.Data == "WIN")
+                                labelStatus.Text = "You Win!";
+                            else
+                                labelStatus.Text = "You Lose!";
 
-                        DisableBoard();
-                        break;
-                    }
+                            DisableBoard();
+                            break;
+                        }
 
-                case CommandType.Disconnect:
-                    {
-                        MessageBox.Show("Opponent disconnected!");
-                        labelStatus.Text = "You Win (Opponent left)";
-                        DisableBoard();
-                        break;
-                    }
+                    case CommandType.Disconnect:
+                        {
+                            MessageBox.Show("Opponent disconnected!");
+                            labelStatus.Text = "You Win (Opponent left)";
+                            DisableBoard();
+                            break;
+                        }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"UI Exception in GameForm HandlePacket: {ex.ToString()}");
             }
         }
 
