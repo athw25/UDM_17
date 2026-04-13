@@ -1,4 +1,4 @@
-﻿using Caro.Client.Network;
+using Caro.Client.Network;
 using Caro.Client.UI.Helpers;
 using Caro.Shared.Network;
 using System;
@@ -108,9 +108,11 @@ namespace Caro.Client.UI.Forms
                     }
 
                 case CommandType.StartGame:
-                    string opponent = packet.Data;
+                    string opponent = packet.Data; // "1" for Player1, "2" for Player2
+                    bool isHost = packet.Payload == "1";
 
-                    UIHelper.SwitchForm(this, new GameForm(username, opponent, socket, true)); break;
+                    UIHelper.SwitchForm(this, new GameForm(username, opponent, socket, isHost));
+                    break;
             }
         }
 
