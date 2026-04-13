@@ -216,10 +216,17 @@ namespace Caro.Client.UI.Forms
                             break;
                         }
 
+                    case CommandType.GameOver:
+                    case CommandType.MatchFinished:
                     case CommandType.Win:
                         {
                             timer.Stop();
-                            if (packet.Data == "WIN")
+
+                            string winnerName = "";
+                            try { winnerName = JsonSerializer.Deserialize<string>(packet.Data); }
+                            catch { winnerName = packet.Data; }
+
+                            if (winnerName == myName || packet.Data == "WIN")
                                 labelStatus.Text = "You Win!";
                             else
                                 labelStatus.Text = "You Lose!";
