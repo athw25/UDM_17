@@ -65,11 +65,11 @@ namespace Caro.Client.UI.Forms
             isMyTurn = isHost;
             myValue = isHost ? 1 : 2;
 
+            InitBoard();
             UpdateTurnUI();
 
             socket.OnReceive += HandlePacket;
 
-            InitBoard();
             InitTimer();
             ResetTimer();
         }
