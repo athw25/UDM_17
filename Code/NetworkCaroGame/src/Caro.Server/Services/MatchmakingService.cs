@@ -10,10 +10,8 @@ namespace Caro.Server.Services
     {
         private ServerManager _server;
 
-        // Danh sÃ¡ch ngÆ°á»i chÆ¡i Ä‘ang chá» ghÃ©p
         private List<ClientHandler> _waitingPlayers = new List<ClientHandler>();
 
-        // Danh sÃ¡ch phÃ²ng Ä‘ang chÆ¡i
         private List<GameRoom> _rooms = new List<GameRoom>();
 
         public MatchmakingService(ServerManager server)
@@ -49,7 +47,6 @@ namespace Caro.Server.Services
             }
         }
 
-        // MATCHMAKING
         private void HandleFindMatch(ClientHandler client)
         {
             Console.WriteLine($"{client.PlayerInfo.Name} is finding match...");
@@ -59,11 +56,9 @@ namespace Caro.Server.Services
 
             if (_waitingPlayers.Count > 0)
             {
-                // Láº¥y ngÆ°á»i chÆ¡i Ä‘áº§u tiÃªn trong hÃ ng Ä‘á»£i
                 var opponent = _waitingPlayers[0];
                 _waitingPlayers.RemoveAt(0);
 
-                // Táº¡o phÃ²ng
                 var room = new GameRoom(opponent, client, this);
                 _rooms.Add(room);
 
@@ -121,8 +116,6 @@ namespace Caro.Server.Services
         public void HandleDisconnect(ClientHandler client)
         {
             Console.WriteLine($"{client.PlayerInfo.Name} disconnected");
-
-            // Náº¿u Ä‘ang chá» thÃ¬ xÃ³a khá»i hÃ ng Ä‘á»£i
             _waitingPlayers.Remove(client);
 
             var room = FindRoomByClient(client);
@@ -130,7 +123,6 @@ namespace Caro.Server.Services
             {
                 var opponent = room.Player1 == client ? room.Player2 : room.Player1;
 
-                // bÃ¡o cho Ä‘á»‘i thá»§
                 opponent.SendPacket(new Packet
                 {
                     Command = CommandType.PlayerDisconnected,
