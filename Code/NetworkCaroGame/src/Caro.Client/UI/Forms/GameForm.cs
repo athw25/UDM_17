@@ -52,16 +52,24 @@ namespace Caro.Client.UI.Forms
         {
             InitializeComponent();
 
+            textBoxName_me.ReadOnly = true;
+            textBoxName_Opponent.ReadOnly = true;
+            textBoxIP.ReadOnly = true;  
+
             this.myName = me;
             this.opponent = opponent;
             this.socket = socket;
 
             textBoxName_me.Text = me;
             textBoxName_Opponent.Text = opponent;
+            
+            // Show IP:Port 
+            string serverInfo = string.IsNullOrEmpty(socket.ServerIP) 
+                ? "Connected" 
+                : $"{socket.ServerIP}:{socket.ServerPort}";
+            textBoxIP.Text = serverInfo;
 
-            textBoxIP.Text = "Connected";
-
-            // Host đi trước
+            // Host first 
             isMyTurn = isHost;
             myValue = isHost ? 1 : 2;
 
@@ -157,7 +165,7 @@ namespace Caro.Client.UI.Forms
                     X = p.X,
                     Y = p.Y,
                     Player = myValue
-                }) 
+                })
             });
 
             if (CheckWin(p.X, p.Y))
@@ -167,7 +175,7 @@ namespace Caro.Client.UI.Forms
                     Command = CommandType.GameOver,
                     Data = JsonSerializer.Serialize(myName)
                 });
-                
+
                 labelStatus.Text = "You Win!";
                 DisableBoard();
                 timer.Stop();
@@ -429,7 +437,9 @@ namespace Caro.Client.UI.Forms
             textBoxName_Opponent.Name = "textBoxName_Opponent";
             textBoxName_Opponent.Size = new Size(183, 27);
             textBoxName_Opponent.TabIndex = 8;
-            textBoxName_Opponent.Text = "Username(Opponent)";
+            textBoxName_Opponent.Text = "";  
+            textBoxName_Opponent.ReadOnly = true;  
+            textBoxName_Opponent.TextChanged += textBoxName_Opponent_TextChanged;
             // 
             // pictureIconTurn
             // 
@@ -465,7 +475,8 @@ namespace Caro.Client.UI.Forms
             textBoxIP.Name = "textBoxIP";
             textBoxIP.Size = new Size(183, 27);
             textBoxIP.TabIndex = 3;
-            textBoxIP.Text = "IP Server";
+            textBoxIP.Text = "";  
+            textBoxIP.ReadOnly = true;  
             textBoxIP.TextChanged += textBox2_TextChanged;
             // 
             // progressBarTime
@@ -483,6 +494,7 @@ namespace Caro.Client.UI.Forms
             textBoxName_me.Size = new Size(183, 27);
             textBoxName_me.TabIndex = 0;
             textBoxName_me.Text = "Username(me)";
+            textBoxName_me.TextChanged += textBoxName_me_TextChanged;
             // 
             // panelChessBoard
             // 
@@ -552,6 +564,16 @@ namespace Caro.Client.UI.Forms
         }
 
         private void pictureBox1_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void textBoxName_me_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void textBoxName_Opponent_TextChanged(object sender, EventArgs e)
         {
 
         }

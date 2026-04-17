@@ -24,9 +24,21 @@ namespace Caro.Server.Core
         public void StartGame()
         {
             Console.WriteLine($"Starting game between {Player1.PlayerInfo.Name} and {Player2.PlayerInfo.Name}");
-            // Player 1 goes first
-            Player1.SendPacket(new Packet { Command = CommandType.StartGame, Payload = "1" }); // 1 = First
-            Player2.SendPacket(new Packet { Command = CommandType.StartGame, Payload = "2" }); // 2 = Second
+            
+  
+            Player1.SendPacket(new Packet 
+            { 
+                Command = CommandType.StartGame, 
+                Data = Player2.PlayerInfo.Name,      // name of opponent for Player1
+                Payload = "1"                         // 1 = Player1 goes first
+            });
+            
+            Player2.SendPacket(new Packet 
+            { 
+                Command = CommandType.StartGame, 
+                Data = Player1.PlayerInfo.Name,      // name of opponent for Player2
+                Payload = "2"                         // 2 =
+            });
         }
 
         public void HandlePacket(ClientHandler sender, Packet packet)

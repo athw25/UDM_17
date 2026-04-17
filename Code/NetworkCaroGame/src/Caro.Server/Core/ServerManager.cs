@@ -145,5 +145,22 @@ namespace Caro.Server.Core
                 return _clients.FirstOrDefault(c => c.PlayerInfo.Id == id);
             }
         }
+
+        public string GetClientNameById(string id)
+        {
+            lock (_clientsLock)
+            {
+                var client = _clients.FirstOrDefault(c => c.PlayerInfo.Id == id);
+                return client?.PlayerInfo.Name ?? "Unknown";
+            }
+        }
+
+        public string GetOpponentName(ClientHandler player1, ClientHandler player2, ClientHandler currentClient)
+        {
+            if (currentClient.PlayerInfo.Id == player1.PlayerInfo.Id)
+                return player2.PlayerInfo.Name;
+            else
+                return player1.PlayerInfo.Name;
+        }
     }
 }

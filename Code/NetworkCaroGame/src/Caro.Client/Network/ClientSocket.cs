@@ -14,6 +14,9 @@ namespace Caro.Client.Network
     {
         private TcpClient client;
         private NetworkStream stream;
+        
+        public string? ServerIP { get; private set; }
+        public int ServerPort { get; private set; }
 
         private readonly SemaphoreSlim sendLock = new SemaphoreSlim(1, 1);
         private CancellationTokenSource cts;
@@ -25,6 +28,9 @@ namespace Caro.Client.Network
         // ================= CONNECT =================
         public async Task ConnectAsync(string ip, int port)
         {
+            ServerIP = ip;        
+            ServerPort = port;    
+            
             client = new TcpClient();
             await client.ConnectAsync(ip, port);
 
