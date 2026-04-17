@@ -8,7 +8,7 @@ namespace Caro.Shared.Game
         private readonly int[,] board;
         public int Size { get; private set; }
 
-        // keep history of moves for possible undo / replay
+        // store move history for undo/replay
         private readonly Stack<(int x, int y)> history = new Stack<(int, int)>();
 
         /// <summary>
@@ -21,7 +21,7 @@ namespace Caro.Shared.Game
             board = new int[size, size];
         }
 
-        // 0 = trống, 1 = player1, 2 = player2
+        // 0 = empty, 1 = player1, 2 = player2
         public int GetCell(int x, int y)
         {
             ValidateCoordinates(x, y);

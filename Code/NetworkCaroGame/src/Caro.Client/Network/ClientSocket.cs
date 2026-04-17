@@ -18,7 +18,6 @@ namespace Caro.Client.Network
         private readonly SemaphoreSlim sendLock = new SemaphoreSlim(1, 1);
         private CancellationTokenSource cts;
 
-        // 🔥 EVENT NHẬN DATA
         public event Action<Packet>? OnReceive;
 
         public bool IsConnected => client?.Connected ?? false;
@@ -80,7 +79,7 @@ namespace Caro.Client.Network
             }
         }
 
-        // ================= SYNC SEND (CHO UI DỄ DÙNG) =================
+        // ================= SYNC SEND =================
         public void Send(Packet packet)
         {
             _ = SendAsync(packet);

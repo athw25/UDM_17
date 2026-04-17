@@ -157,7 +157,7 @@ namespace Caro.Client.UI.Forms
                     X = p.X,
                     Y = p.Y,
                     Player = myValue
-                })
+                }) 
             });
 
             if (CheckWin(p.X, p.Y))

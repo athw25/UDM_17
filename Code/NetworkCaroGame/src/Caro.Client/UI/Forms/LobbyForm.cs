@@ -35,7 +35,7 @@ namespace Caro.Client.UI.Forms
             username = user;
             this.socket = socket;
 
-            InitializeComponent(); // GIá»® NGUYÃŠN UI
+            InitializeComponent(); 
 
             // UI config
             buttonChallenge.Enabled = false;
@@ -50,7 +50,6 @@ namespace Caro.Client.UI.Forms
             buttonHistory.Click += BtnHistory_Click;
             buttonLogout.Click += BtnLogout_Click;
 
-            // nháº­n data tá»« server
             this.socket.OnReceive += HandlePacket;
         }
 
@@ -174,7 +173,7 @@ namespace Caro.Client.UI.Forms
             UIHelper.SwitchForm(this, new LoginForm());
         }
 
-        // ================= DESIGN (GIá»® NGUYÃŠN) =================
+        // ================= DESIGN =================
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(LobbyForm));

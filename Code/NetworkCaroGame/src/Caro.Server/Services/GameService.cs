@@ -45,7 +45,7 @@ namespace Caro.Server.Services
             return room;
         }
 
-        // Called by MatchmakingService (or ServerManager) when a packet from a client that may belong to a game arrives.
+        // Called by MatchmakingService when a packet from a client that may belong to a game arrives.
         public void HandlePacket(ClientHandler sender, Packet packet)
         {
             if (sender == null || packet == null) return;
@@ -114,7 +114,6 @@ namespace Caro.Server.Services
                 var ok = board.MakeMove(move.X, move.Y, playerNumber);
                 if (!ok) return;
 
-                // Forward the move to opponent
                 opponent?.SendPacket(packet);
 
                 // Check for win
@@ -142,7 +141,6 @@ namespace Caro.Server.Services
                         matchmaking.EndGame(room);
                     }
 
-                    // Remove room locally
                     RemoveRoom(room);
                 }
             }
@@ -223,7 +221,6 @@ namespace Caro.Server.Services
 
                 int count = 1; // include last move
 
-                // forward direction
                 int x = lastX + dx, y = lastY + dy;
                 while (x >= 0 && y >= 0 && x < size && y < size && board.GetCell(x, y) == player)
                 {
@@ -231,7 +228,6 @@ namespace Caro.Server.Services
                     x += dx; y += dy;
                 }
 
-                // backward direction
                 x = lastX - dx; y = lastY - dy;
                 while (x >= 0 && y >= 0 && x < size && y < size && board.GetCell(x, y) == player)
                 {

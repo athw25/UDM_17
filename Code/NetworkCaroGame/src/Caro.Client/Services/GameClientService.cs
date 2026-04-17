@@ -9,8 +9,7 @@ using Caro.Shared.Utils;
 namespace Caro.Client.Services
 {
     /// <summary>
-    /// High-level client-side service that wraps a ClientSocket and exposes events / helpers
-    /// used by the UI forms (Login, Lobby, Game, History).
+    /// High-level client-side service that wraps a ClientSocket and exposes events / helpers, used by the UI forms (Login, Lobby, Game, History).
     /// </summary>
     public class GameClientService
     {
@@ -61,7 +60,6 @@ namespace Caro.Client.Services
             }
         }
 
-        // Expose raw socket for advanced scenarios (forms currently use ClientSocket directly in the project)
         public ClientSocket Socket => _socket;
 
         // ========== REQUESTS / ACTIONS ==========
@@ -75,7 +73,6 @@ namespace Caro.Client.Services
         public void GetPlayers()
         {
             if (_socket == null) throw new InvalidOperationException("Not connected");
-            // LobbyForm expects CommandType.PlayerList with Data = ""
             _socket.Send(new Packet { Command = CommandType.PlayerList, Data = "" });
         }
 

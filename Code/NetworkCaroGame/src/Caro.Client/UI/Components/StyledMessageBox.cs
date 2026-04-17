@@ -1,4 +1,3 @@
-//namespace Caro.Client.UI.Components { public class StyledMessageBox { } }
 using System.Windows.Forms;
 
 namespace Caro.Client.UI.Components

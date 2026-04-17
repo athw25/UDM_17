@@ -26,7 +26,7 @@ namespace Caro.Client.UI.Forms
         {
             InitializeComponent();
 
-            // Gán event cho button 
+            // event for button 
             buttonConnect.Click += Connect_Click;
 
         }

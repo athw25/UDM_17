@@ -1,6 +1,4 @@
-//using System.Windows.Forms; namespace Caro.Client.UI.Forms { public class HistoryForm : Form { } }
 using Caro.Client.Network;
-using Caro.Client.UI.Services;
 using Caro.Shared.Models;
 using Caro.Shared.Network;
 using System;
