@@ -79,34 +79,42 @@ namespace Caro.Client.UI.Forms
                         }
 
                     case CommandType.Challenge:
-                        string fromUser = packet.Data;
-
-                        var result = MessageBox.Show(
-                            $"{fromUser} challenged you",
-                            "Challenge",
-                            MessageBoxButtons.YesNo);
-
-                        if (result == DialogResult.Yes)
                         {
-                            socket.Send(new Packet
+                            string fromUser = packet.Data;
+
+                            var result = MessageBox.Show(
+                                $"{fromUser} challenged you",
+                                "Challenge",
+                                MessageBoxButtons.YesNo);
+
+                            if (result == DialogResult.Yes)
                             {
-                                Command = CommandType.Accept,
-                                Data = fromUser
-                            });
-                        }
-                        else
-                        {
-                            socket.Send(new Packet
+                                socket.Send(new Packet
+                                {
+                                    Command = CommandType.Accept,
+                                    Data = fromUser
+                                });
+                            }
+                            else
                             {
-                                Command = CommandType.Reject,
-                                Data = fromUser
-                            });
+                                socket.Send(new Packet
+                                {
+                                    Command = CommandType.Reject,
+                                    Data = fromUser
+                                });
+                            }
+
+                            buttonChallenge.Enabled = listBoxPlayer.SelectedItem != null;
+
+                            break;
                         }
-                        break;
 
                     case CommandType.Reject:
                         {
                             MessageBox.Show($"{packet.Data} rejected your challenge!");
+
+                            buttonChallenge.Enabled = listBoxPlayer.SelectedItem != null;
+
                             break;
                         }
 
@@ -149,6 +157,9 @@ namespace Caro.Client.UI.Forms
                 Command = CommandType.Challenge,
                 Data = opponent
             });
+            // disable button to prevent multiple clicks
+            buttonChallenge.Enabled = false;
+
         }
 
         // Refresh

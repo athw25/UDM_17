@@ -202,7 +202,7 @@ namespace Caro.Client.UI.Forms
             // ===== CONNECT SERVER =====
             try
             {
-                buttonConnect.Enabled = false;
+                buttonConnect.Enabled = false; // disable button to prevent multiple clicks
 
                 socket = new ClientSocket();
 
