@@ -13,5 +13,21 @@ namespace Caro.Client.UI.Components
         {
             MessageBox.Show(message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
+
+        public static void Warning(string message)
+        {
+            MessageBox.Show(message, "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+        }
+
+        public static void Success(string message)
+        {
+            MessageBox.Show(message, "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+
+        public static void Info(string message)
+        {
+            MessageBox.Show(message, "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+
     }
 }

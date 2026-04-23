@@ -138,7 +138,7 @@ namespace Caro.Server.Services
                     // Notify matchmaking to clean up the room if provided
                     if (_roomMatchmaking.TryGetValue(room, out var matchmaking))
                     {
-                        matchmaking.EndGame(room);
+                        matchmaking.EndRoom(room); 
                     }
 
                     RemoveRoom(room);
@@ -161,7 +161,7 @@ namespace Caro.Server.Services
 
                 if (_roomMatchmaking.TryGetValue(room, out var matchmaking))
                 {
-                    matchmaking.EndGame(room);
+                    matchmaking.EndRoom(room);
                 }
 
                 RemoveRoom(room);

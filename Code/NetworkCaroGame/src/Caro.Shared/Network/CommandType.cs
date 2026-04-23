@@ -26,6 +26,10 @@ namespace Caro.Shared.Network
         Challenge,
         Accept,
         Reject,
-        HistoryData
+        HistoryData,
+        Surrender,           
+        DuplicateUsername,   
+        InvalidInput,        
+        OpponentDisconnected 
     }
 }

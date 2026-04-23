@@ -1,9 +1,10 @@
-
 using Caro.Client.Network;
 using Caro.Client.UI.Components;
 using Caro.Client.UI.Helpers;
+using Caro.Shared.Models;
 using System;
 using System.ComponentModel;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 
 namespace Caro.Client.UI.Forms
@@ -25,10 +26,7 @@ namespace Caro.Client.UI.Forms
         public LoginForm()
         {
             InitializeComponent();
-
-            // event for button 
             buttonConnect.Click += Connect_Click;
-
         }
 
         private void InitializeComponent()
@@ -49,9 +47,7 @@ namespace Caro.Client.UI.Forms
             panel2.SuspendLayout();
             panel3.SuspendLayout();
             SuspendLayout();
-            // 
-            // panel1
-            // 
+            
             panel1.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             panel1.Controls.Add(pictureBox1);
             panel1.Location = new System.Drawing.Point(259, 4);
@@ -59,9 +55,7 @@ namespace Caro.Client.UI.Forms
             panel1.Size = new System.Drawing.Size(409, 419);
             panel1.TabIndex = 0;
             panel1.Paint += panel1_Paint;
-            // 
-            // pictureBox1
-            // 
+            
             pictureBox1.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             pictureBox1.Image = Properties.Resources._9a91e11d31b376abcc3b8f28cec9414b;
             pictureBox1.Location = new System.Drawing.Point(3, 3);
@@ -70,9 +64,7 @@ namespace Caro.Client.UI.Forms
             pictureBox1.SizeMode = PictureBoxSizeMode.StretchImage;
             pictureBox1.TabIndex = 0;
             pictureBox1.TabStop = false;
-            // 
-            // textBoxServer
-            // 
+            
             textBoxServer.Location = new System.Drawing.Point(3, 3);
             textBoxServer.Name = "textBoxServer";
             textBoxServer.Size = new System.Drawing.Size(232, 27);
@@ -80,27 +72,21 @@ namespace Caro.Client.UI.Forms
             textBoxServer.Text = "127.0.0.1"; 
             textBoxServer.Enabled = true;
             textBoxServer.TextChanged += textBoxServer_TextChanged;
-            // 
-            // textBoxPort
-            // 
+            
             textBoxPort.Location = new System.Drawing.Point(3, 36);
             textBoxPort.Name = "textBoxPort";
             textBoxPort.Size = new System.Drawing.Size(232, 27);
             textBoxPort.TabIndex = 2;
             textBoxPort.Text = "8888"; 
             textBoxPort.Enabled = true;
-            // 
-            // panel2
-            // 
+            
             panel2.Controls.Add(label2);
             panel2.Controls.Add(label1);
             panel2.Location = new System.Drawing.Point(3, 4);
             panel2.Name = "panel2";
             panel2.Size = new System.Drawing.Size(238, 187);
             panel2.TabIndex = 3;
-            // 
-            // label2
-            // 
+            
             label2.AutoSize = true;
             label2.Font = new System.Drawing.Font("Forte", 22.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, 0);
             label2.ForeColor = System.Drawing.Color.Firebrick;
@@ -109,9 +95,7 @@ namespace Caro.Client.UI.Forms
             label2.Size = new System.Drawing.Size(100, 41);
             label2.TabIndex = 1;
             label2.Text = "Login";
-            // 
-            // label1
-            // 
+            
             label1.AutoSize = true;
             label1.Font = new System.Drawing.Font("Showcard Gothic", 22.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, 0);
             label1.Location = new System.Drawing.Point(15, 61);
@@ -120,9 +104,7 @@ namespace Caro.Client.UI.Forms
             label1.TabIndex = 0;
             label1.Text = "Game Caro";
             label1.Click += label1_Click;
-            // 
-            // panel3
-            // 
+            
             panel3.Controls.Add(buttonConnect);
             panel3.Controls.Add(textBoxName);
             panel3.Controls.Add(textBoxServer);
@@ -131,26 +113,20 @@ namespace Caro.Client.UI.Forms
             panel3.Name = "panel3";
             panel3.Size = new System.Drawing.Size(238, 215);
             panel3.TabIndex = 4;
-            // 
-            // buttonConnect
-            // 
+            
             buttonConnect.Location = new System.Drawing.Point(67, 121);
             buttonConnect.Name = "buttonConnect";
             buttonConnect.Size = new System.Drawing.Size(94, 29);
             buttonConnect.TabIndex = 4;
             buttonConnect.Text = "Connect";
             buttonConnect.UseVisualStyleBackColor = true;
-            // 
-            // textBoxName
-            // 
+            
             textBoxName.Location = new System.Drawing.Point(3, 70);
             textBoxName.Name = "textBoxName";
             textBoxName.Size = new System.Drawing.Size(232, 27);
             textBoxName.TabIndex = 3;
             textBoxName.Text = "UserName";
-            // 
-            // LoginForm
-            // 
+            
             ClientSize = new System.Drawing.Size(671, 427);
             Controls.Add(panel3);
             Controls.Add(panel2);
@@ -165,7 +141,6 @@ namespace Caro.Client.UI.Forms
             panel3.ResumeLayout(false);
             panel3.PerformLayout();
             ResumeLayout(false);
-
         }
 
         private async void Connect_Click(object sender, EventArgs e)
@@ -177,60 +152,58 @@ namespace Caro.Client.UI.Forms
             // ===== VALIDATE =====
             if (string.IsNullOrWhiteSpace(ip) || ip == "IP Server")
             {
-                StyledMessageBox.Error("Please enter Server IP");
+                StyledMessageBox.Error("Vui lòng nhập IP Server");
                 return;
             }
 
             if (string.IsNullOrWhiteSpace(portText) || portText == "Port")
             {
-                StyledMessageBox.Error("Please enter Port");
+                StyledMessageBox.Error("Vui lòng nhập Port");
                 return;
             }
 
-            if (!int.TryParse(portText, out int port))
+            if (!int.TryParse(portText, out int port) || port < 1024 || port > 65535)
             {
-                StyledMessageBox.Error("Port must be a number");
+                StyledMessageBox.Error("Port phải là số hợp lệ (1024-65535)");
                 return;
             }
 
+            // Validation username
             if (string.IsNullOrWhiteSpace(username) || username == "UserName")
             {
-                StyledMessageBox.Error("Please enter Username");
+                StyledMessageBox.Error("Vui lòng nhập tên người chơi");
                 return;
             }
 
-            // ===== CONNECT SERVER =====
+            if (username.Length > GameConstants.MAX_USERNAME_LENGTH)
+            {
+                StyledMessageBox.Error($"Tên người chơi tối đa {GameConstants.MAX_USERNAME_LENGTH} ký tự");
+                return;
+            }
+
+            if (!Regex.IsMatch(username, GameConstants.USERNAME_PATTERN))
+            {
+                StyledMessageBox.Error("Tên người chơi chỉ chứa chữ (Anh/Việt), số, underscore, dấu cách (3-20 ký tự)");
+                return;
+            }
+
             try
             {
-                buttonConnect.Enabled = false; // disable button to prevent multiple clicks
-
+                buttonConnect.Enabled = false;
                 socket = new ClientSocket();
-
                 await socket.ConnectAsync(ip, port);
                 socket.Login(username);
                 UIHelper.SwitchForm(this, new LobbyForm(username, socket));
             }
             catch (Exception ex)
             {
-                StyledMessageBox.Error("Cannot connect to server\n" + ex.Message);
+                StyledMessageBox.Error("Không thể kết nối đến server\n" + ex.Message);
                 buttonConnect.Enabled = true;
             }
         }
 
-
-        private void panel1_Paint(object sender, PaintEventArgs e)
-        {
-
-        }
-
-        private void label1_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void textBoxServer_TextChanged(object sender, EventArgs e)
-        {
-
-        }
+        private void panel1_Paint(object sender, PaintEventArgs e) { }
+        private void label1_Click(object sender, EventArgs e) { }
+        private void textBoxServer_TextChanged(object sender, EventArgs e) { }
     }
 }

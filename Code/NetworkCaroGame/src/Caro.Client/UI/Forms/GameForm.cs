@@ -1,4 +1,5 @@
 using Caro.Client.Network;
+using Caro.Client.UI.Components;
 using Caro.Shared.Models;
 using Caro.Shared.Network;
 using System;
@@ -22,6 +23,7 @@ namespace Caro.Client.UI.Forms
         private TextBox textBoxIP;
         private ProgressBar progressBarTime;
         private Button buttonConnect;
+        private Button buttonSurrender;
         private Panel panelChessBoard;
         private PictureBox pictureIconTurn;
         private Label label2;
@@ -42,16 +44,18 @@ namespace Caro.Client.UI.Forms
 
         private bool isMyTurn;
         private int myValue; // 1 = X, 2 = O
+        private bool gameEnded = false;
 
         private Button lastMove;
         private Timer timer;
         private int timeLeft = 30;
+        private int emptyCount = BOARD_SIZE * BOARD_SIZE;
 
         // ================= CONSTRUCTOR =================
         public GameForm(string me, string opponent, ClientSocket socket, bool isHost)
         {
             InitializeComponent();
-
+    
             textBoxName_me.ReadOnly = true;
             textBoxName_Opponent.ReadOnly = true;
             textBoxIP.ReadOnly = true;  
@@ -80,6 +84,9 @@ namespace Caro.Client.UI.Forms
 
             InitTimer();
             ResetTimer();
+
+            // Ensure we clean up properly on form close
+            this.FormClosing += GameForm_FormClosing;
         }
 
         // ================= INIT =================
@@ -98,12 +105,9 @@ namespace Caro.Client.UI.Forms
                         Location = new Point(j * CELL_SIZE, i * CELL_SIZE),
                         Tag = new Point(i, j),
                         FlatStyle = FlatStyle.Flat
-
                     };
                     btn.FlatAppearance.BorderSize = 1;
-
                     btn.Click += Cell_Click;
-
                     btn.Margin = new Padding(0);
                     btn.BackColor = Color.White;
 
@@ -134,7 +138,14 @@ namespace Caro.Client.UI.Forms
             {
                 timer.Stop();
                 labelStatus.Text = "Lose (timeout)";
+                gameEnded = true;
                 DisableBoard();
+                
+                socket.Send(new Packet
+                {
+                    Command = CommandType.GameOver,
+                    Data = JsonSerializer.Serialize(opponent)
+                });
             }
         }
 
@@ -148,7 +159,7 @@ namespace Caro.Client.UI.Forms
         // ================= CLICK =================
         private void Cell_Click(object sender, EventArgs e)
         {
-            if (!isMyTurn) return;
+            if (!isMyTurn || gameEnded) return;
 
             Button btn = sender as Button;
             Point p = (Point)btn.Tag;
@@ -156,6 +167,7 @@ namespace Caro.Client.UI.Forms
             if (matrix[p.X, p.Y] != 0) return;
 
             MakeMove(p.X, p.Y, myValue);
+            emptyCount--;
 
             socket.Send(new Packet
             {
@@ -168,8 +180,10 @@ namespace Caro.Client.UI.Forms
                 })
             });
 
+            // Check win 
             if (CheckWin(p.X, p.Y))
             {
+                gameEnded = true;
                 socket.Send(new Packet
                 {
                     Command = CommandType.GameOver,
@@ -177,6 +191,24 @@ namespace Caro.Client.UI.Forms
                 });
 
                 labelStatus.Text = "You Win!";
+                StyledMessageBox.Success("Bạn đã thắng!");
+                DisableBoard();
+                timer.Stop();
+                return;
+            }
+
+            // Check draw
+            if (emptyCount == 0)
+            {
+                gameEnded = true;
+                socket.Send(new Packet
+                {
+                    Command = CommandType.MatchFinished,
+                    Data = "Draw"
+                });
+
+                labelStatus.Text = "Draw!";
+                StyledMessageBox.Info("Kết quả hòa!");
                 DisableBoard();
                 timer.Stop();
                 return;
@@ -185,6 +217,31 @@ namespace Caro.Client.UI.Forms
             isMyTurn = false;
             UpdateTurnUI();
             timer.Stop();
+        }
+
+        // ================= SURRENDER =================
+        private void ButtonSurrender_Click(object sender, EventArgs e)
+        {
+            if (gameEnded) return;
+
+            var result = MessageBox.Show(
+                "Bạn có chắc chắn muốn đầu hàng?",
+                "Xác nhận",
+                MessageBoxButtons.YesNo);
+
+            if (result == DialogResult.Yes)
+            {
+                gameEnded = true;
+                socket.Send(new Packet
+                {
+                    Command = CommandType.Surrender,
+                    Data = myName
+                });
+
+                labelStatus.Text = "You Surrendered!";
+                DisableBoard();
+                timer.Stop();
+            }
         }
 
         // ================= MAKE MOVE =================
@@ -200,7 +257,6 @@ namespace Caro.Client.UI.Forms
 
             btn.BackgroundImageLayout = ImageLayout.Stretch;
 
-            // highlight
             if (lastMove != null)
             {
                 lastMove.FlatAppearance.BorderSize = 1;
@@ -210,7 +266,6 @@ namespace Caro.Client.UI.Forms
             btn.FlatAppearance.BorderColor = Color.Red;
             btn.FlatAppearance.BorderSize = 3;
             lastMove = btn;
-
         }
 
         // ================= RECEIVE =================
@@ -222,6 +277,8 @@ namespace Caro.Client.UI.Forms
                 return;
             }
 
+            if (packet == null) return;
+
             try
             {
                 switch (packet.Command)
@@ -229,8 +286,10 @@ namespace Caro.Client.UI.Forms
                     case CommandType.Move:
                         {
                             var move = JsonSerializer.Deserialize<MoveData>(packet.Data);
+                            if (move == null) break;
 
                             MakeMove(move.X, move.Y, move.Player);
+                            emptyCount--;
 
                             isMyTurn = true;
                             UpdateTurnUI();
@@ -239,34 +298,67 @@ namespace Caro.Client.UI.Forms
                         }
 
                     case CommandType.GameOver:
-                    case CommandType.MatchFinished:
-                    case CommandType.Win:
                         {
+                            if (gameEnded) break;
+                            gameEnded = true;
                             timer.Stop();
 
                             string winnerName = "";
                             try { winnerName = JsonSerializer.Deserialize<string>(packet.Data); }
                             catch { winnerName = packet.Data; }
 
-                            if (winnerName == myName || packet.Data == "WIN")
+                            if (winnerName == myName)
                             {
                                 labelStatus.Text = "You Win!";
-                                MessageBox.Show("Congratulations! You won the match.", "Game Over");
+                                StyledMessageBox.Success("Bạn đã thắng!");
                             }
                             else
                             {
                                 labelStatus.Text = "You Lose!";
-                                MessageBox.Show("You lost the match. Better luck next time!", "Game Over");
+                                StyledMessageBox.Error("Bạn đã thua!");
                             }
 
                             DisableBoard();
                             break;
                         }
 
-                    case CommandType.Disconnect:
+                    case CommandType.Surrender:
                         {
-                            MessageBox.Show("Opponent disconnected!");
-                            labelStatus.Text = "You Win (Opponent left)";
+                            if (gameEnded) break;
+                            gameEnded = true;
+                            timer.Stop();
+
+                            labelStatus.Text = "You Win (Opponent surrendered)!";
+                            StyledMessageBox.Success("Đối thủ đã đầu hàng! Bạn thắng!");
+                            DisableBoard();
+                            break;
+                        }
+
+                    case CommandType.MatchFinished:
+                        {
+                            if (gameEnded) break;
+                            gameEnded = true;
+                            timer.Stop();
+
+                            string result = packet.Data;
+                            if (result == "Draw")
+                            {
+                                labelStatus.Text = "Draw!";
+                                StyledMessageBox.Info("Kết quả hòa!");
+                            }
+
+                            DisableBoard();
+                            break;
+                        }
+
+                    case CommandType.OpponentDisconnected:
+                        {
+                            if (gameEnded) break;
+                            gameEnded = true;
+                            timer.Stop();
+
+                            labelStatus.Text = "You Win (Opponent disconnected)!";
+                            StyledMessageBox.Success("Đối thủ đã thoát trận! Bạn thắng!");
                             DisableBoard();
                             break;
                         }
@@ -274,7 +366,7 @@ namespace Caro.Client.UI.Forms
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"UI Exception in GameForm HandlePacket: {ex.ToString()}");
+                Console.WriteLine($"UI Exception in GameForm HandlePacket: {ex}");
             }
         }
 
@@ -320,7 +412,7 @@ namespace Caro.Client.UI.Forms
         // ================= UI =================
         private void UpdateTurnUI()
         {
-            if (isMyTurn)
+            if (isMyTurn && !gameEnded)
             {
                 pictureIconTurn.Image = myValue == 1
                     ? Properties.Resources.X
@@ -328,7 +420,7 @@ namespace Caro.Client.UI.Forms
 
                 labelStatus.Text = "Your Turn";
             }
-            else
+            else if (!gameEnded)
             {
                 pictureIconTurn.Image = myValue == 1
                     ? Properties.Resources.O
@@ -336,9 +428,14 @@ namespace Caro.Client.UI.Forms
 
                 labelStatus.Text = "Waiting...";
             }
-            foreach (var btn in board)
-                btn.Enabled = isMyTurn && matrix[((Point)btn.Tag).X, ((Point)btn.Tag).Y] == 0;
 
+            foreach (var btn in board)
+            {
+                Point p = (Point)btn.Tag;
+                btn.Enabled = isMyTurn && !gameEnded && matrix[p.X, p.Y] == 0;
+            }
+
+            buttonSurrender.Enabled = !gameEnded;
             pictureIconTurn.SizeMode = PictureBoxSizeMode.StretchImage;
         }
 
@@ -347,7 +444,85 @@ namespace Caro.Client.UI.Forms
             foreach (var btn in board)
                 btn.Enabled = false;
 
+            buttonSurrender.Enabled = false;
             timer.Stop();
+        }
+
+        // ================= FORM CLOSING =================
+        private void GameForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            try
+            {
+                // Unsubscribe from socket events FIRST to prevent any packet handling during cleanup
+                if (socket != null)
+                {
+                    socket.OnReceive -= HandlePacket;
+                }
+
+                // Send disconnect notification only if game is not already ended
+                if (!gameEnded && socket != null && socket.IsConnected)
+                {
+                    try
+                    {
+                        socket.Send(new Packet
+                        {
+                            Command = CommandType.Disconnect,
+                            Data = myName
+                        });
+                        System.Threading.Thread.Sleep(100); // Brief delay to ensure packet is sent
+                    }
+                    catch { }
+                }
+
+                // Stop and properly dispose timer
+                if (timer != null)
+                {
+                    timer.Stop();
+                    timer.Tick -= Timer_Tick;
+                    timer.Dispose();
+                    timer = null;
+                }
+
+                // Clean up board
+                if (panelChessBoard != null)
+                {
+                    panelChessBoard.Controls.Clear();
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error in GameForm_FormClosing: {ex.Message}");
+            }
+        }
+
+        // ================= BUTTON RETURN =================
+        private void buttonConnect_Click(object sender, EventArgs e)
+        {
+            // Disable button to prevent multiple clicks
+            buttonConnect.Enabled = false;
+            
+            try
+            {
+                // Stop timer immediately
+                if (timer != null && timer.Enabled)
+                {
+                    timer.Stop();
+                }
+
+                // Unsubscribe from socket before closing
+                if (socket != null)
+                {
+                    socket.OnReceive -= HandlePacket;
+                }
+
+                // Close this form (FormClosing event will be triggered)
+                this.Close();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error in buttonConnect_Click: {ex.Message}");
+                buttonConnect.Enabled = true;
+            }
         }
 
         private void InitializeComponent()
@@ -362,6 +537,7 @@ namespace Caro.Client.UI.Forms
             pictureIconTurn = new PictureBox();
             label2 = new Label();
             buttonConnect = new Button();
+            buttonSurrender = new Button();
             textBoxIP = new TextBox();
             progressBarTime = new ProgressBar();
             textBoxName_me = new TextBox();
@@ -371,18 +547,14 @@ namespace Caro.Client.UI.Forms
             panel1.SuspendLayout();
             ((ISupportInitialize)pictureIconTurn).BeginInit();
             SuspendLayout();
-            // 
-            // panelPic
-            // 
+            
             panelPic.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             panelPic.Controls.Add(pictureGame);
             panelPic.Location = new Point(688, 12);
             panelPic.Name = "panelPic";
             panelPic.Size = new Size(350, 350);
             panelPic.TabIndex = 1;
-            // 
-            // pictureGame
-            // 
+            
             pictureGame.BackgroundImageLayout = ImageLayout.Stretch;
             pictureGame.Image = Properties.Resources._9a91e11d31b376abcc3b8f28cec9414b;
             pictureGame.ImageLocation = "";
@@ -392,190 +564,116 @@ namespace Caro.Client.UI.Forms
             pictureGame.SizeMode = PictureBoxSizeMode.StretchImage;
             pictureGame.TabIndex = 0;
             pictureGame.TabStop = false;
-            pictureGame.Click += pictureGame_Click;
-            // 
-            // panel1
-            // 
+            
             panel1.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             panel1.Controls.Add(labelStatus);
             panel1.Controls.Add(label1);
             panel1.Controls.Add(textBoxName_Opponent);
             panel1.Controls.Add(pictureIconTurn);
             panel1.Controls.Add(label2);
+            panel1.Controls.Add(buttonSurrender);
             panel1.Controls.Add(buttonConnect);
             panel1.Controls.Add(textBoxIP);
             panel1.Controls.Add(progressBarTime);
             panel1.Controls.Add(textBoxName_me);
             panel1.Location = new Point(688, 377);
             panel1.Name = "panel1";
-            panel1.Size = new Size(354, 235);
+            panel1.Size = new Size(354, 280);
             panel1.TabIndex = 2;
-            // 
-            // labelStatus
-            // 
+            
             labelStatus.AutoSize = true;
-            labelStatus.Location = new Point(4, 169);
+            labelStatus.Location = new Point(4, 220);
             labelStatus.Name = "labelStatus";
             labelStatus.Size = new Size(52, 20);
             labelStatus.TabIndex = 10;
             labelStatus.Text = "Status:";
-            labelStatus.Click += label3_Click;
-            // 
-            // label1
-            // 
+            
             label1.AutoSize = true;
             label1.Location = new Point(3, 111);
             label1.Name = "label1";
             label1.Size = new Size(71, 20);
             label1.TabIndex = 9;
             label1.Text = "Time left:";
-            label1.Click += label1_Click;
-            // 
-            // textBoxName_Opponent
-            // 
+            
             textBoxName_Opponent.Location = new Point(3, 69);
             textBoxName_Opponent.Name = "textBoxName_Opponent";
             textBoxName_Opponent.Size = new Size(183, 27);
             textBoxName_Opponent.TabIndex = 8;
-            textBoxName_Opponent.Text = "";  
-            textBoxName_Opponent.ReadOnly = true;  
-            textBoxName_Opponent.TextChanged += textBoxName_Opponent_TextChanged;
-            // 
-            // pictureIconTurn
-            // 
+            textBoxName_Opponent.ReadOnly = true;
+            
             pictureIconTurn.Location = new Point(192, 36);
             pictureIconTurn.Name = "pictureIconTurn";
             pictureIconTurn.Size = new Size(135, 127);
             pictureIconTurn.TabIndex = 7;
             pictureIconTurn.TabStop = false;
-            pictureIconTurn.Click += pictureBox1_Click;
-            // 
-            // label2
-            // 
+            
             label2.AutoSize = true;
             label2.Location = new Point(192, 6);
             label2.Name = "label2";
             label2.Size = new Size(95, 20);
             label2.TabIndex = 6;
             label2.Text = "Symbol Turn:";
-            // 
-            // buttonConnect
-            // 
-            buttonConnect.Location = new Point(192, 181);
+            
+            buttonConnect.Location = new Point(192, 220);
             buttonConnect.Name = "buttonConnect";
             buttonConnect.Size = new Size(135, 29);
             buttonConnect.TabIndex = 4;
             buttonConnect.Text = "Return to Lobby";
             buttonConnect.UseVisualStyleBackColor = true;
             buttonConnect.Click += buttonConnect_Click;
-            // 
-            // textBoxIP
-            // 
+
+            buttonSurrender.Location = new Point(192, 185);
+            buttonSurrender.Name = "buttonSurrender";
+            buttonSurrender.Size = new Size(135, 29);
+            buttonSurrender.TabIndex = 5;
+            buttonSurrender.Text = "Surrender";
+            buttonSurrender.UseVisualStyleBackColor = true;
+            buttonSurrender.Click += ButtonSurrender_Click;
+            
             textBoxIP.Location = new Point(3, 3);
             textBoxIP.Name = "textBoxIP";
             textBoxIP.Size = new Size(183, 27);
             textBoxIP.TabIndex = 3;
-            textBoxIP.Text = "";  
-            textBoxIP.ReadOnly = true;  
-            textBoxIP.TextChanged += textBox2_TextChanged;
-            // 
-            // progressBarTime
-            // 
+            textBoxIP.ReadOnly = true;
+            
             progressBarTime.Location = new Point(3, 134);
             progressBarTime.Name = "progressBarTime";
             progressBarTime.Size = new Size(183, 29);
             progressBarTime.TabIndex = 1;
-            progressBarTime.Click += progressBarTime_Click;
-            // 
-            // textBoxName_me
-            // 
+            
             textBoxName_me.Location = new Point(3, 36);
             textBoxName_me.Name = "textBoxName_me";
             textBoxName_me.Size = new Size(183, 27);
             textBoxName_me.TabIndex = 0;
-            textBoxName_me.Text = "Username(me)";
-            textBoxName_me.TextChanged += textBoxName_me_TextChanged;
-            // 
-            // panelChessBoard
-            // 
-            panelChessBoard.Location = new Point(21, 11);
+            textBoxName_me.ReadOnly = true;
+            
+            panelChessBoard.Location = new Point(12, 12);
             panelChessBoard.Name = "panelChessBoard";
-            panelChessBoard.Size = new Size(642, 601);
-            panelChessBoard.TabIndex = 3;
-            // 
-            // GameForm
-            // 
-            ClientSize = new Size(1062, 689);
+            panelChessBoard.Size = new Size(670, 600);
+            panelChessBoard.TabIndex = 0;
+            
+            ClientSize = new System.Drawing.Size(1050, 670);
             Controls.Add(panelChessBoard);
-            Controls.Add(panel1);
             Controls.Add(panelPic);
-            Icon = (Icon)resources.GetObject("$this.Icon");
+            Controls.Add(panel1);
+            Icon = (System.Drawing.Icon)resources.GetObject("$this.Icon");
             Name = "GameForm";
-            Text = "Game Caro ";
-            Load += GameForm_Load;
+            Text = "Game Caro - Playing";
             panelPic.ResumeLayout(false);
             ((ISupportInitialize)pictureGame).EndInit();
             panel1.ResumeLayout(false);
             panel1.PerformLayout();
             ((ISupportInitialize)pictureIconTurn).EndInit();
             ResumeLayout(false);
-
         }
 
-        private void pictureGame_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void textBox2_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void GameForm_Load(object sender, EventArgs e)
-        {
-
-        }
-
-        private void buttonConnect_Click(object sender, EventArgs e)
-        {
-            socket.OnReceive -= HandlePacket;
-            Caro.Client.UI.Helpers.UIHelper.SwitchForm(this, new LobbyForm(myName, socket));
-        }
-
-        private void pictureBoxIcon_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void label1_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void label3_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void progressBarTime_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void pictureBox1_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void textBoxName_me_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void textBoxName_Opponent_TextChanged(object sender, EventArgs e)
-        {
-
-        }
+        private void pictureGame_Click(object sender, EventArgs e) { }
+        private void pictureBox1_Click(object sender, EventArgs e) { }
+        private void label3_Click(object sender, EventArgs e) { }
+        private void label1_Click(object sender, EventArgs e) { }
+        private void textBox2_TextChanged(object sender, EventArgs e) { }
+        private void progressBarTime_Click(object sender, EventArgs e) { }
+        private void textBoxName_me_TextChanged(object sender, EventArgs e) { }
+        private void textBoxName_Opponent_TextChanged(object sender, EventArgs e) { }
     }
 }

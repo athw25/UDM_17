@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Caro.Shared.Network;
 using Caro.Shared.Models;
@@ -56,14 +57,17 @@ namespace Caro.Server.Core
 
         private void Handler_OnPacketReceived(ClientHandler client, Packet packet)
         {
+            // Kiểm tra packet null
+            if (packet == null)
+            {
+                Console.WriteLine($"[Server] Received null packet from {client.PlayerInfo.Name}");
+                return;
+            }
+
             switch (packet.Command)
             {
                 case CommandType.Login:
-                    string playerName = Serializer.Deserialize<string>(packet.Payload);
-                    client.PlayerInfo.Name = playerName;
-                    client.SendPacket(new Packet { Command = CommandType.LoginSuccess, Payload = Serializer.Serialize(client.PlayerInfo) });
-                    BroadcastPlayerList();
-                    Console.WriteLine($"Player {playerName} logged in.");
+                    HandleLogin(client, packet);
                     break;
 
                 case CommandType.GetPlayers:
@@ -81,6 +85,83 @@ namespace Caro.Server.Core
             }
         }
 
+        // Xử lý login với kiểm tra duplicate username
+        private void HandleLogin(ClientHandler client, Packet packet)
+        {
+            try
+            {
+                string playerName = Serializer.Deserialize<string>(packet.Payload);
+
+                // Validation dữ liệu
+                if (string.IsNullOrWhiteSpace(playerName))
+                {
+                    client.SendPacket(new Packet 
+                    { 
+                        Command = CommandType.LoginFailed, 
+                        Data = "Username không được để trống"
+                    });
+                    return;
+                }
+
+                // Kiểm tra độ dài username
+                if (playerName.Length > GameConstants.MAX_USERNAME_LENGTH)
+                {
+                    client.SendPacket(new Packet 
+                    { 
+                        Command = CommandType.LoginFailed, 
+                        Data = $"Username tối đa {GameConstants.MAX_USERNAME_LENGTH} ký tự"
+                    });
+                    return;
+                }
+
+                // Kiểm tra ký tự đặc biệt
+                if (!Regex.IsMatch(playerName, GameConstants.USERNAME_PATTERN))
+                {
+                    client.SendPacket(new Packet 
+                    { 
+                        Command = CommandType.LoginFailed, 
+                        Data = "Username chỉ chứa chữ, số, underscore (3-20 ký tự)"
+                    });
+                    return;
+                }
+
+                // Kiểm tra duplicate username (đang online)
+                lock (_clientsLock)
+                {
+                    if (_clients.Any(c => c.PlayerInfo.Name == playerName && c != client))
+                    {
+                        client.SendPacket(new Packet 
+                        { 
+                            Command = CommandType.DuplicateUsername, 
+                            Data = $"Username '{playerName}' đã tồn tại"
+                        });
+                        return;
+                    }
+                }
+
+                client.PlayerInfo.Name = playerName;
+                client.PlayerInfo.IsPlaying = false;
+                
+                client.SendPacket(new Packet 
+                { 
+                    Command = CommandType.LoginSuccess, 
+                    Payload = Serializer.Serialize(client.PlayerInfo) 
+                });
+                
+                BroadcastPlayerList();
+                Console.WriteLine($"Player {playerName} logged in successfully.");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"[Server] Login error: {ex.Message}");
+                client.SendPacket(new Packet 
+                { 
+                    Command = CommandType.InvalidInput, 
+                    Data = "Lỗi xử lý dữ liệu đăng nhập"
+                });
+            }
+        }
+
         private void Handler_OnDisconnected(ClientHandler client)
         {
             lock (_clientsLock)
@@ -92,7 +173,14 @@ namespace Caro.Server.Core
             Console.WriteLine($"Client {client.PlayerInfo.Name ?? "Unknown"} disconnected.");
         }
 
-        public ClientHandler GetClientByName(string name) { lock (_clientsLock) { return _clients.FirstOrDefault(c => c.PlayerInfo.Name == name); } }
+        public ClientHandler GetClientByName(string name)
+        {
+            lock (_clientsLock)
+            {
+                return _clients.FirstOrDefault(c => c.PlayerInfo.Name == name);
+            }
+        }
+
         public void BroadcastPlayerList()
         {
             List<PlayerInfo> players;
