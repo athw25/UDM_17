@@ -2,6 +2,7 @@ using Caro.Client.Network;
 using Caro.Client.UI.Components;
 using Caro.Client.UI.Helpers;
 using Caro.Shared.Models;
+using Caro.Shared.Network;
 using System;
 using System.ComponentModel;
 using System.Text.RegularExpressions;
@@ -192,8 +193,31 @@ namespace Caro.Client.UI.Forms
                 buttonConnect.Enabled = false;
                 socket = new ClientSocket();
                 await socket.ConnectAsync(ip, port);
+                
+                void HandleLoginResponse(Packet packet)
+                {
+                    if (packet.Command == CommandType.LoginSuccess)
+                    {
+                        socket.OnReceive -= HandleLoginResponse;
+                        Invoke(new Action(() => 
+                        {
+                            UIHelper.SwitchForm(this, new LobbyForm(username, socket));
+                        }));
+                    }
+                    else if (packet.Command == CommandType.LoginFailed || packet.Command == CommandType.DuplicateUsername)
+                    {
+                        socket.OnReceive -= HandleLoginResponse;
+                        Invoke(new Action(() => 
+                        {
+                            StyledMessageBox.Error(packet.Data);
+                            socket.Disconnect();
+                            buttonConnect.Enabled = true;
+                        }));
+                    }
+                }
+
+                socket.OnReceive += HandleLoginResponse;
                 socket.Login(username);
-                UIHelper.SwitchForm(this, new LobbyForm(username, socket));
             }
             catch (Exception ex)
             {
